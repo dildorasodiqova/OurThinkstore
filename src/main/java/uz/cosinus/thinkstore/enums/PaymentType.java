@@ -1,6 +1,9 @@
 package uz.cosinus.thinkstore.enums;
 
 public enum PaymentType {
-    CLICK
+    CLICK,
+    PAYME,
+    CASH
+
 
 }
