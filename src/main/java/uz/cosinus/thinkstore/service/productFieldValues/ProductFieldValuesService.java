@@ -8,7 +8,7 @@ import java.util.List;
 import java.util.UUID;
 
 public interface ProductFieldValuesService {
-    ProductFieldValuesResponseDto create (ProductFieldValuesCreateDto dto);
+    String create (List<ProductFieldValuesCreateDto> dto);
     ProductFieldValues findById(UUID productFieldId);
     ProductFieldValuesResponseDto getById(UUID productFieldId);
     ProductFieldValuesResponseDto updateActive(UUID productFieldId, Boolean trueOrFalse);

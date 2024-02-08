@@ -17,6 +17,7 @@ public class ProductLikeEntity extends BaseEntity {
     @ManyToOne(cascade = CascadeType.ALL, fetch = FetchType.EAGER)
     private UserEntity user;
 
+    @JoinColumn(name = "product_id")
     @ManyToOne(cascade = CascadeType.ALL, fetch = FetchType.EAGER)
     private ProductEntity product;
 }

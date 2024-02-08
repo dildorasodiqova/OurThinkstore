@@ -21,4 +21,5 @@ public class ProductFieldValues  extends BaseEntity{
     @JoinColumn(name = "product_id")
     @ManyToOne(cascade = CascadeType.ALL, fetch = FetchType.EAGER)
     private ProductEntity product;
+
 }

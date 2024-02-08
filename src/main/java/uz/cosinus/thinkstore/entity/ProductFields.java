@@ -19,7 +19,6 @@ public class ProductFields extends BaseEntity {
     @ManyToOne(cascade = CascadeType.ALL, fetch = FetchType.EAGER)
     private ProductEntity product;
 
-    private Boolean isRequired; //  bu shu fieldni toldirish kkligini bildiradi.
 
 }
 

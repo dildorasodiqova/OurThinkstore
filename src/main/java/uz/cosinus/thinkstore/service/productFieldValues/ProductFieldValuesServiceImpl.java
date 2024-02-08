@@ -25,13 +25,12 @@ public class ProductFieldValuesServiceImpl implements ProductFieldValuesService{
     private final ProductFieldsService productFieldsService;
     private final ProductService productService;
     @Override
-    public ProductFieldValuesResponseDto create(ProductFieldValuesCreateDto dto) {
-        /**
-         * buyerda valueni hech nimani tekshirmasdan qoshish kkmi
-         */
-        ProductFieldValues parse = parse(dto);
-        productFieldValuesRepository.save(parse);
-        return parse(parse);
+    public String create(List<ProductFieldValuesCreateDto> dtos) {
+        for (ProductFieldValuesCreateDto cr : dtos) {
+            ProductFieldValues parse = parse(cr);
+            productFieldValuesRepository.save(parse);
+        }
+        return "Successfully";
     }
 
     @Override
