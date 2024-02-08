@@ -47,11 +47,7 @@ public class BasketProductController {
     }
 
 
-    @PreAuthorize("hasAuthority('ADMIN') or hasAuthority('USER')")
-    @GetMapping("/getById/{basketProductId}")
-    public ResponseEntity<BasketProductResponseDto> getById(@PathVariable UUID basketProductId) {
-        return ResponseEntity.ok(basketProductService.getById(basketProductId));
-    }
+
 
 
 }

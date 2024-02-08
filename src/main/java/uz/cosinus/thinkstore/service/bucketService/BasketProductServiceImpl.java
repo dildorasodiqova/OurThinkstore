@@ -37,11 +37,7 @@ public class BasketProductServiceImpl implements BasketProductService {
         return parse(save);
     }
 
-    @Override
-    public BasketProductResponseDto getById(UUID basketId) {
-        BasketProductEntity basket = basketProductRepository.findById(basketId).orElseThrow(()-> new DataNotFoundException("Basket not found !"));
-        return parse(basket);
-    }
+
 
     @Override
     public List<BasketProductResponseDto> getAll(int page, int size) {

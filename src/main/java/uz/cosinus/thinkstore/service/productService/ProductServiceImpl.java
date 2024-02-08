@@ -1,6 +1,7 @@
 package uz.cosinus.thinkstore.service.productService;
 
 import lombok.RequiredArgsConstructor;
+import lombok.extern.slf4j.Slf4j;
 import org.modelmapper.ModelMapper;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageRequest;
@@ -27,6 +28,7 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.UUID;
 @Service
+@Slf4j
 @RequiredArgsConstructor
 public class ProductServiceImpl implements ProductService{
     private final ProductRepository productRepository;
@@ -66,7 +68,6 @@ public class ProductServiceImpl implements ProductService{
 
     @Transactional
     public ProductResponseDto createProduct(ProductCreateDto dto) {
-        System.out.println("dto = " + dto);
         if (productRepository.findByNameIgnoreCase(dto.getName()).isPresent()) {
             throw new DataAlreadyExistsException("Product already exists");
         }
