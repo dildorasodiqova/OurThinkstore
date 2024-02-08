@@ -105,11 +105,7 @@ public class ProductServiceImpl implements ProductService{
 
     @Transactional
     public List<UUID> getPhotosId(List<ProductPhotosEntity> productPhotos) {
-        List<UUID> list = new ArrayList<>();
-        for (ProductPhotosEntity productPhoto : productPhotos) {
-            list.add(productPhoto.getPhoto().getId());
-        }
-        return list;
+        return  productPhotos.stream().map(productPhotosEntity -> productPhotosEntity.getPhoto().getId()).toList();
     }
 
     @Transactional

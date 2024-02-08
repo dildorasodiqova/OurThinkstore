@@ -73,6 +73,8 @@ public class ProductFieldValuesServiceImpl implements ProductFieldValuesService{
         ProductEntity product = productService.findById(dto.getProductId());
         return new ProductFieldValues(dto.getValue(), productFields, product);
     }
+
+
     private ProductFieldValuesResponseDto parse(ProductFieldValues values){
         return new ProductFieldValuesResponseDto(
                 values.getId(),
