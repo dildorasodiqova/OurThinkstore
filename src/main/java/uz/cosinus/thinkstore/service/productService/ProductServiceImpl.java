@@ -80,7 +80,7 @@ public class ProductServiceImpl implements ProductService{
         productFieldValuesService.create(new ProductFieldValuesCreateDto(jbjj));
 
 //manashu qatorda  findallbyid degan ichida ko'p idlar boradiku sbunda hammasini qaytaradimikan
-        List<AttachmentEntity> photos = attachmentRepository.findAllById(dto.getPhotos());
+        List<AttachmentEntity> photos = attachmentRepository.findAllById(dto.getPhotos());  //buyerini tushunmadim ne unday deyapti
         List<ProductPhotosEntity> list = new ArrayList<>();
         for (int i = 0; i < photos.size(); i++) {
             ProductPhotosEntity productPhotos = new ProductPhotosEntity();

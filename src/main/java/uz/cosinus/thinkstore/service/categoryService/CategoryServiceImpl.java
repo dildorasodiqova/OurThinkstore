@@ -8,6 +8,7 @@ import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 import uz.cosinus.thinkstore.dto.createDto.CategoryCreateDto;
 import uz.cosinus.thinkstore.dto.responseDto.CategoryResponseDto;
+import uz.cosinus.thinkstore.entity.AttachmentEntity;
 import uz.cosinus.thinkstore.entity.CategoryEntity;
 import uz.cosinus.thinkstore.exception.DataAlreadyExistsException;
 import uz.cosinus.thinkstore.exception.DataNotFoundException;
@@ -122,12 +123,14 @@ public class CategoryServiceImpl implements CategoryService {
         category.setDescription(dto.getDescription());
         category.setName(dto.getName());
 
+        AttachmentEntity photo = attachmentService.findById(dto.getPhotoId());
         ///buyerda ham rasm muommo
-        category.setPhoto(dto.getPhotoId());
+        category.setPhoto(photo);
+
         CategoryEntity category1 = categoryRepository.findById(dto.getParentId()).orElseThrow(() -> new DataNotFoundException("Category not found"));
         category.setParent(category1);
 
-
+        return parse(category);
     }
 
     @Override
@@ -146,6 +149,9 @@ public class CategoryServiceImpl implements CategoryService {
             }
         }
         return list;
+    }
+    private CategoryResponseDto parse(CategoryEntity category){
+        return new CategoryResponseDto(category.getId(), category.getName(), category.getPhoto().getId(), category.getParent().getId(), category.getDescription(), category.getCreatedDate());
     }
 
     private CategoryEntity parse(CategoryCreateDto createDto) {

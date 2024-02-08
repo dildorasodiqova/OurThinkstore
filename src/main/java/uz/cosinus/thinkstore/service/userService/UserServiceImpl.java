@@ -124,6 +124,9 @@ public class UserServiceImpl implements  UserService{
         userRepository.save(userEntity);
 
 //        throw new AuthenticationCredentialsNotFoundException("Code expired");
+        return null;
+
+        //shuyerda bu method kkmi ozi kkmasmi 🤷‍♀️
     }
 
 

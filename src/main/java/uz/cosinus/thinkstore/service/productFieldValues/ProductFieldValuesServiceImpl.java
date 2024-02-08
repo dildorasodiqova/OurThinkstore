@@ -61,6 +61,12 @@ public class ProductFieldValuesServiceImpl implements ProductFieldValuesService{
         return parse(all.getContent());
     }
 
+    @Override
+    public List<ProductFieldValuesResponseDto> findAllByFieldId(UUID fieldId) {
+        List<ProductFieldValues> list = productFieldValuesRepository.findAllByProductFieldsId(fieldId);
+        return parse(list);
+    }
+
 
     private ProductFieldValues parse(ProductFieldValuesCreateDto dto){
         ProductFields productFields = productFieldsService.findById(dto.getProductFieldId());

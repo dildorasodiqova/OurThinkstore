@@ -13,4 +13,6 @@ public interface ProductFieldValuesService {
     ProductFieldValuesResponseDto getById(UUID productFieldId);
     ProductFieldValuesResponseDto updateActive(UUID productFieldId, Boolean trueOrFalse);
     List<ProductFieldValuesResponseDto> getALl(int page, int size);
+
+    List<ProductFieldValuesResponseDto> findAllByFieldId(UUID fieldId);
 }

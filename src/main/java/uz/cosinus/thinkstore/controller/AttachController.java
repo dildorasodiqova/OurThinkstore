@@ -34,7 +34,7 @@ public class AttachController {
 
     @PreAuthorize("hasAuthority('ADMIN')")
     @DeleteMapping("/delete/{id}")
-    public ResponseEntity<ApiResponse<?>> delete(@PathVariable("id") String photoId) {
+    public ResponseEntity<ApiResponse<?>> delete(@PathVariable("id") UUID photoId) {
         log.info("Delete attach  = {}", photoId);
         return ResponseEntity.ok(attachmentService.delete(photoId));
     }
@@ -42,7 +42,7 @@ public class AttachController {
 
     @PermitAll
     @GetMapping(value = "/open/{id}", produces = MediaType.IMAGE_PNG_VALUE)
-    public byte[] open_general(@PathVariable("id") String id) {
+    public byte[] open_general(@PathVariable("id") UUID id) {
         log.info("open attach  ={}", id);
         return attachmentService.open_general(id);
     }
@@ -50,7 +50,7 @@ public class AttachController {
 
     @PermitAll
     @GetMapping("/download/{id}")
-    public ResponseEntity<Resource> download(@PathVariable("id") String fileName) {
+    public ResponseEntity<Resource> download(@PathVariable("id") UUID fileName) {
         log.info("download attach  ={}", fileName);
         return attachmentService.download(fileName);
     }

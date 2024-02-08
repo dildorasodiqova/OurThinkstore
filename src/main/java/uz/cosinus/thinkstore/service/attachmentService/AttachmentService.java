@@ -5,14 +5,16 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.web.multipart.MultipartFile;
 import uz.cosinus.thinkstore.dto.responseDto.ApiResponse;
 import uz.cosinus.thinkstore.dto.responseDto.AttachResDTO;
+import uz.cosinus.thinkstore.entity.AttachmentEntity;
 
 import java.util.UUID;
 
 public interface AttachmentService {
     AttachResDTO upload(MultipartFile file, UUID userId);
-    byte[] open_general(String fileName);
-    ResponseEntity<Resource> download(String fileName);
-    AttachmentEntity getEntity(String id);
+    byte[] open_general(UUID fileName);
+    ResponseEntity<Resource> download(UUID fileName);
+    AttachmentEntity findById(UUID id);
     String getUrl(String fileName);
-    ApiResponse<?> delete(String id);
+    ApiResponse<?> delete(UUID id);
+
 }

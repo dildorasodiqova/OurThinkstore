@@ -11,7 +11,6 @@ import org.springframework.stereotype.Service;
 import org.springframework.web.multipart.MultipartFile;
 import uz.cosinus.thinkstore.dto.responseDto.ApiResponse;
 import uz.cosinus.thinkstore.dto.responseDto.AttachResDTO;
-import uz.cosinus.thinkstore.entity.AttachEntity;
 import uz.cosinus.thinkstore.entity.AttachmentEntity;
 import uz.cosinus.thinkstore.exception.ItemNotFoundException;
 import uz.cosinus.thinkstore.repository.AttachmentRepository;
@@ -59,7 +58,7 @@ public class AttachmentServiceImpl implements AttachmentService {
 
         String extension = getExtension(Objects.requireNonNull(file.getOriginalFilename()));
         try {
-            AttachEntity entity = new AttachEntity();
+            AttachmentEntity entity = new AttachmentEntity();
             entity.setCreatedId(userId);
             entity.setPath(pathFolder);
             entity.setSize(file.getSize());
@@ -73,7 +72,7 @@ public class AttachmentServiceImpl implements AttachmentService {
             Path path = Paths.get(folderName + "/" + pathFolder + "/" + entity.getId() + "." + extension);
             Files.write(path, bytes);
 
-            return toDTO(entity.getId(), getUrl(entity.getId()));
+            return toDTO(entity.getId().toString(), getUrl(entity.getId().toString()));
         } catch (IOException e) {
             log.warn("Attach error : {}", e.getMessage());
             throw new RuntimeException(e);
@@ -88,8 +87,8 @@ public class AttachmentServiceImpl implements AttachmentService {
     }
 
     @Override
-    public byte[] open_general(String fileName) {
-        AttachEntity entity = getEntity(fileName);
+    public byte[] open_general(UUID fileName) {
+        AttachmentEntity entity = findById(fileName);
         try {
             BufferedImage originalImage = ImageIO.read(new File(getPath(entity)));
             ByteArrayOutputStream boas = new ByteArrayOutputStream();
@@ -105,8 +104,8 @@ public class AttachmentServiceImpl implements AttachmentService {
     }
 
     @Override
-    public ResponseEntity<Resource> download(String fileName) {
-        AttachmentEntity entity = getEntity(fileName);
+    public ResponseEntity<Resource> download(UUID fileName) {
+        AttachmentEntity entity = findById(fileName);
         try {
             Path file = Paths.get(getPath(entity));
             Resource resource = new UrlResource(file.toUri());
@@ -123,8 +122,8 @@ public class AttachmentServiceImpl implements AttachmentService {
     }
 
     @Override
-    public AttachmentEntity getEntity(String id) {
-        Optional<AttachmentEntity> optional = attachmentRepository.findByIdAndVisibleIsTrue(id);
+    public AttachmentEntity findById(UUID id) {
+        Optional<AttachmentEntity> optional = attachmentRepository.findByIdAndIsActiveTrue(id);
         if (optional.isEmpty()) {
             log.warn("Attach error : file not found");
             throw new ItemNotFoundException("File not found");
@@ -147,8 +146,8 @@ public class AttachmentServiceImpl implements AttachmentService {
     }
 
     @Override
-    public ApiResponse<?> delete(String id) {
-        AttachmentEntity entity = getEntity(id);
+    public ApiResponse<?> delete(UUID id) {
+        AttachmentEntity entity = findById(id);
         entity.setIsActive(false);
 
         attachmentRepository.save(entity);
