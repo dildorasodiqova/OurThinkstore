@@ -7,7 +7,7 @@ import uz.cosinus.thinkstore.entity.AttachmentEntity;
 import java.util.Optional;
 import java.util.UUID;
 
-public interface AttachmentRepository extends JpaRepository<AttachmentEntity, String> {
+public interface AttachmentRepository extends JpaRepository<AttachmentEntity, UUID> {
 
     Optional<AttachmentEntity> findByIdAndIsActiveTrue(UUID id);
 }

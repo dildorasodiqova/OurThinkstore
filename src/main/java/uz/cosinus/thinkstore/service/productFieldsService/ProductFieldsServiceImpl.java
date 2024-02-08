@@ -27,13 +27,18 @@ public class ProductFieldsServiceImpl implements ProductFieldsService {
     private final ProductFieldValuesService productFieldValuesService;
     private final ProductService productService;
     @Override
-    public ProductFieldsResponseDto create(ProductFieldsCreateDto dto) {
-        if (productFieldsRepository.existsAllByProductIdAndName(dto.getProductId(), dto.getName())){
-            throw new BadRequestException("This field name already exists in product .");
+    public String create(UUID productID, List<ProductFieldsCreateDto> dto) {
+        for (ProductFieldsCreateDto cr : dto) {
+            if (productFieldsRepository.existsAllByProductIdAndName(productID, cr.getName())){
+                throw new BadRequestException("This field name already exists in product .");
+            }
+            ProductFields parse = parse(cr);
+            productFieldsRepository.save(parse);
+            productFieldValuesService.create(cr.getProductFieldValues());
         }
-        ProductFields parse = parse(dto);
-        productFieldsRepository.save(parse);
-        return parse(parse);
+
+
+        return "";
     }
 
     @Override

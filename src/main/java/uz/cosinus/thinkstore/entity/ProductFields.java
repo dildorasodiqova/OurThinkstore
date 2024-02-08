@@ -11,12 +11,14 @@ import lombok.Setter;
 @Getter
 @Setter
 @Entity(name = "productField")
+@Table(name = "product_field")
 public class ProductFields extends BaseEntity {
     private String name;
 
-    @JoinColumn(name = "product_id")
+    @JoinColumn(name = "product_id", insertable = false, updatable = false)
     @ManyToOne(cascade = CascadeType.ALL, fetch = FetchType.EAGER)
     private ProductEntity product;
+
 
 }
 

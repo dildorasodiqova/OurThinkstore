@@ -23,7 +23,7 @@ public class FeedbackEntity extends BaseEntity {
     @Column(nullable = false)
     private int rate;
 
-    @Column(nullable = false)
+    @Column(nullable = false, columnDefinition = "TEXT")
     private String text; 
 
 }

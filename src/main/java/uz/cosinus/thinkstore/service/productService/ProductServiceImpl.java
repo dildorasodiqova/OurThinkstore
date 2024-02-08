@@ -36,7 +36,6 @@ public class ProductServiceImpl implements ProductService{
     private final AttachmentRepository attachmentRepository;
     private final ProductPhotosService productPhotosService;
     private final ProductFieldsService productFieldsService;
-    private final ProductFieldValuesService productFieldValuesService;
     private final ModelMapper modelMapper;
     @Override
     public ProductEntity findById(UUID productId) {
@@ -76,12 +75,10 @@ public class ProductServiceImpl implements ProductService{
         map.setCategory(category);
 
         ProductEntity save = productRepository.save(map);
-        
-        productFieldsService.create(new ProductFieldsCreateDto(jhbjkvh)); /// shuyerda yangi field saqlanish kk uni qayerdan olaman
-        productFieldValuesService.create(new ProductFieldValuesCreateDto(jbjj));
 
-//manashu qatorda  findallbyid degan ichida ko'p idlar boradiku sbunda hammasini qaytaradimikan
-        List<AttachmentEntity> photos = attachmentRepository.findAllById(dto.getPhotos());  //buyerini tushunmadim ne unday deyapti
+        productFieldsService.create( save.getId(),  dto.getProductFields());
+
+        List<AttachmentEntity> photos = attachmentRepository.findAllById(dto.getPhotos());
         List<ProductPhotosEntity> list = new ArrayList<>();
         for (int i = 0; i < photos.size(); i++) {
             ProductPhotosEntity productPhotos = new ProductPhotosEntity();
@@ -105,11 +102,7 @@ public class ProductServiceImpl implements ProductService{
 
     @Transactional
     public List<UUID> getPhotosId(List<ProductPhotosEntity> productPhotos) {
-        List<UUID> list = new ArrayList<>();
-        for (ProductPhotosEntity productPhoto : productPhotos) {
-            list.add(productPhoto.getPhoto().getId());
-        }
-        return list;
+        return  productPhotos.stream().map(productPhotosEntity -> productPhotosEntity.getPhoto().getId()).toList();
     }
 
     @Transactional
