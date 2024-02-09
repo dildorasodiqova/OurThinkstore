@@ -27,8 +27,8 @@ public class BasketProductServiceImpl implements BasketProductService {
     private final BasketProductRepository basketProductRepository;
 
     @Override
-    public BasketProductResponseDto create(BasketProductCreateDto dto) {
-        UserEntity user = userService.findById(dto.getUserId());
+    public BasketProductResponseDto create(BasketProductCreateDto dto, UUID userId) {
+        UserEntity user = userService.findById(userId);
         ProductEntity product = productRepository.findById(dto.getProductId()).orElseThrow(()->new DataNotFoundException("Product not found"));
         if (product.getCount() < dto.getCount()) {
             throw new DataNotEnoughException("Product is not enough.  There are" + product.getCount() + " products");

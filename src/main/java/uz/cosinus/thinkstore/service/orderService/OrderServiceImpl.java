@@ -30,9 +30,8 @@ public class OrderServiceImpl implements OrderService {
     private final OrderProductService orderProductService;
 
     @Override
-    public OrderResponseDto add(OrderCreateDto dto) {
-        UUID userId = dto.getUserId();
-        UserEntity user = userRepository.findById(userId).orElseThrow(() -> new DataNotFoundException("User not found"));
+    public OrderResponseDto add(OrderCreateDto dto, UUID currentUserId) {
+        UserEntity user = userRepository.findById(currentUserId).orElseThrow(() -> new DataNotFoundException("User not found"));
 
         double price = 0;
         for (OrderProductCreateDto product : dto.getProducts()) {

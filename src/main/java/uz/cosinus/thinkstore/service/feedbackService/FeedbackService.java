@@ -7,10 +7,10 @@ import java.util.List;
 import java.util.UUID;
 
 public interface FeedbackService {
-    FeedbackResponseDto create(FeedBackCreateDto dto);
+    FeedbackResponseDto create(FeedBackCreateDto dto, UUID userId);
     FeedbackResponseDto findById(UUID feedbackId);
     List<FeedbackResponseDto> feedbacksOfProduct(UUID productId);
     String delete(UUID feedbackId, UUID userId);
 
-    FeedbackResponseDto update(UUID feedbackId, String text);
+    FeedbackResponseDto update(UUID feedbackId, String text, UUID currentUserId);
 }

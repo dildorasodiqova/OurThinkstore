@@ -48,22 +48,6 @@ public class ProductServiceImpl implements ProductService{
         return createProduct(dto);
     }
 
-    @Override
-    public ProductResponseDto getById(UUID productId) {
-        ProductEntity product = productRepository.findById(productId).orElseThrow(() -> new DataNotFoundException("Product not found !"));
-        return parse(product);
-    }
-
-
-
-    @Transactional
-    @Override
-    public ProductResponseDto updateActive(UUID productId, Boolean trueOrFalse) {
-        ProductEntity product = productRepository.findById(productId).orElseThrow(() -> new DataNotFoundException("Product not found !"));
-        product.setIsActive(trueOrFalse);
-        productRepository.save(product);
-        return parse(product);
-    }
 
     @Transactional
     public ProductResponseDto createProduct(ProductCreateDto dto) {
@@ -99,11 +83,28 @@ public class ProductServiceImpl implements ProductService{
         return product;
     }
 
+    @Transactional
+    @Override
+    public ProductResponseDto updateActive(UUID productId, Boolean trueOrFalse) {
+        ProductEntity product = productRepository.findById(productId).orElseThrow(() -> new DataNotFoundException("Product not found !"));
+        product.setIsActive(trueOrFalse);
+        productRepository.save(product);
+        return parse(product);
+    }
+
 
     @Transactional
     public List<UUID> getPhotosId(List<ProductPhotosEntity> productPhotos) {
         return  productPhotos.stream().map(productPhotosEntity -> productPhotosEntity.getPhoto().getId()).toList();
     }
+
+
+    @Override
+    public ProductResponseDto getById(UUID productId) {
+        ProductEntity product = productRepository.findById(productId).orElseThrow(() -> new DataNotFoundException("Product not found !"));
+        return parse(product);
+    }
+
 
     @Transactional
     @Override

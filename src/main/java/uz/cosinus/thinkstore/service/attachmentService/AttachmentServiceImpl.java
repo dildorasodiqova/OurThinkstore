@@ -72,7 +72,7 @@ public class AttachmentServiceImpl implements AttachmentService {
             Path path = Paths.get(folderName + "/" + pathFolder + "/" + entity.getId() + "." + extension);
             Files.write(path, bytes);
 
-            return toDTO(entity.getId().toString(), getUrl(entity.getId().toString()));
+            return toDTO(entity.getId().toString(), getUrl(entity.getId()));
         } catch (IOException e) {
             log.warn("Attach error : {}", e.getMessage());
             throw new RuntimeException(e);
@@ -141,7 +141,7 @@ public class AttachmentServiceImpl implements AttachmentService {
     }
 
     @Override
-    public String getUrl(String fileName) {
+    public String getUrl(UUID fileName) {
         return attachUrl + "/api/v1/attach/open/" + fileName;
     }
 

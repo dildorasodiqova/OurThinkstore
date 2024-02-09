@@ -16,6 +16,6 @@ public interface CategoryRepository extends JpaRepository<CategoryEntity, UUID> 
     Page<CategoryEntity> findAllByIsActiveTrue(Pageable pageable);
     @Query(value = "select c from category c where c.parent.id is null")
     List<CategoryEntity> getFirstCategory();
-    Page<CategoryEntity> findAllByNameContainingIgnoreCaseAndIsActiveTrue(String word, Pageable pageable);
+    Page<CategoryEntity> findAllByNameContainingIgnoreCaseAndIsActiveTrueOrderByCreatedDateDesc(String word, Pageable pageable);
     List<CategoryEntity> getCategoriesByParent_Id(UUID parentId);
 }

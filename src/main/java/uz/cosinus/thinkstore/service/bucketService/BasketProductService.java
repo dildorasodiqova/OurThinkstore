@@ -9,7 +9,7 @@ import java.util.UUID;
 public interface BasketProductService {
 
     List<BasketProductResponseDto> getAll(int page, int size);
-    BasketProductResponseDto create(BasketProductCreateDto dto);
+    BasketProductResponseDto create(BasketProductCreateDto dto, UUID userId);
     List<BasketProductResponseDto> getUserProduct(UUID userId);
 
     BasketProductResponseDto updateProductCount(UUID productId, UUID userId, int count);

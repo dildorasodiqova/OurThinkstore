@@ -8,6 +8,7 @@ import uz.cosinus.thinkstore.dto.createDto.ProductFieldsCreateDto;
 import uz.cosinus.thinkstore.dto.responseDto.ProductFieldValuesResponseDto;
 import uz.cosinus.thinkstore.dto.responseDto.ProductFieldsResponseDto;
 import uz.cosinus.thinkstore.dto.responseDto.ProductResponseDto;
+import uz.cosinus.thinkstore.entity.ProductEntity;
 import uz.cosinus.thinkstore.entity.ProductFieldValues;
 import uz.cosinus.thinkstore.entity.ProductFields;
 import uz.cosinus.thinkstore.exception.BadRequestException;
@@ -75,13 +76,16 @@ public class ProductFieldsServiceImpl implements ProductFieldsService {
     }
 
     private ProductFields parse(ProductFieldsCreateDto dto){
-        return new ProductFields(); // buyerdayam rasm un toldirmadim
+        ProductEntity product = productService.findById(dto.getProductId());
+        return new ProductFields(dto.getName(),product);
     }
 
     private List<ProductFieldsResponseDto> parse(Page<ProductFields> all){
         List<ProductFieldsResponseDto> list  = new ArrayList<>();
         for (ProductFields fields : all) {
-            // buyerga tepadagini yozsak shuni kochirib qoyamiz
+            List<ProductFieldValuesResponseDto> all1 = productFieldValuesService.findAllByFieldId(fields.getId());
+            ProductResponseDto pr = productService.getById(fields.getProduct().getId());
+            list.add(new ProductFieldsResponseDto(fields.getId(), all1, fields.getName(),pr, fields.getCreatedDate()));
         }
         return list;
     }
