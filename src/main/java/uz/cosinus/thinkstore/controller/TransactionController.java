@@ -25,7 +25,7 @@ public class TransactionController {
     @PreAuthorize("hasAuthority('USER')")
     @PostMapping
     public ResponseEntity<TransactionResponseDto> createTransaction(@RequestBody TransactionCreateDto transactionCreateDto) {
-        return new ResponseEntity<>(transactionService.createTransaction(transactionCreateDto), HttpStatus.CREATED);
+        return new ResponseEntity<>(transactionService.transaction(transactionCreateDto), HttpStatus.CREATED);
     }
 
     @PreAuthorize("hasAuthority('ADMIN')")
@@ -36,14 +36,14 @@ public class TransactionController {
             @RequestParam(value = "size", defaultValue = "5")
             int size
     ) {
-        List<TransactionResponseDto> transactions = transactionService.getAllTransactions(page, size);
+        List<TransactionResponseDto> transactions = transactionService.getAll(page, size);
         return new ResponseEntity<>(transactions, HttpStatus.OK);
     }
 
     @PreAuthorize("hasAuthority('ADMIN')")
     @GetMapping("/getById/{transactionId}")
-    public ResponseEntity<TransactionResponseDto> getTransactionById(@PathVariable UUID transactionId) {
-        return new ResponseEntity<>(transactionService.getTransactionById(transactionId), HttpStatus.OK);
+    public ResponseEntity<TransactionResponseDto> getById(@PathVariable UUID transactionId) {
+        return new ResponseEntity<>(transactionService.getById(transactionId), HttpStatus.OK);
     }
 
     @PreAuthorize("hasAuthority('USER')")

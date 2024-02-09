@@ -23,18 +23,18 @@ public class TransactionServiceImpl implements TransactionService {
     private final TransactionRepository transactionRepository;
     private final OrderService orderService;
 
-    public TransactionResponseDto createTransaction(TransactionCreateDto transactionCreateDto) {
+    public TransactionResponseDto transaction(TransactionCreateDto transactionCreateDto) {
         TransactionEntity transactionEntity = mapToEntity(transactionCreateDto);
         transactionRepository.save(transactionEntity);
         return mapToDto(transactionEntity);
     }
 
-    public List<TransactionResponseDto> getAllTransactions(int page, int size) {
+    public List<TransactionResponseDto> getAll(int page, int size) {
         Page<TransactionEntity> all = transactionRepository.findAllByIsActiveTrue(PageRequest.of(page, size));
         return mapToDtoList(all.stream().toList());
     }
 
-    public TransactionResponseDto getTransactionById(UUID transactionId) {
+    public TransactionResponseDto getById(UUID transactionId) {
         TransactionEntity transactionEntity = transactionRepository.findById(transactionId)
                 .orElseThrow(() -> new DataNotFoundException("Transaction not found with id: " + transactionId));
         return mapToDto(transactionEntity);

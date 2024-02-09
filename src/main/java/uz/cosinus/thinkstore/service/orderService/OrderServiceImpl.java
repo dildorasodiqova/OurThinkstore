@@ -9,6 +9,7 @@ import uz.cosinus.thinkstore.dto.responseDto.OrderResponseDto;
 import uz.cosinus.thinkstore.entity.OrderEntity;
 import uz.cosinus.thinkstore.entity.OrderProductEntity;
 import uz.cosinus.thinkstore.entity.UserEntity;
+import uz.cosinus.thinkstore.enums.OrderStatus;
 import uz.cosinus.thinkstore.exception.DataNotFoundException;
 import uz.cosinus.thinkstore.repository.OrderProductRepository;
 import uz.cosinus.thinkstore.repository.OrderRepository;
@@ -75,6 +76,18 @@ public class OrderServiceImpl implements OrderService {
     @Override
     public OrderEntity findById(UUID orderId) {
        return orderRepository.findById(orderId).orElseThrow(() -> new DataNotFoundException("Order not found"));
+    }
+
+    @Override
+    public OrderResponseDto updateStatus(UUID orderId, OrderStatus status, UUID currentUser) {
+        OrderEntity order = orderRepository.findById(orderId).orElseThrow(() -> new DataNotFoundException("Order not found"));
+        if(order.getStatus().equals(status)){
+            /**
+             *
+             * shuyerda nima bolsa yoki nima bolmasa deb tekshirish kk
+             */
+        }
+        return new OrderResponseDto();
     }
 
     private OrderResponseDto parse(OrderEntity order, List<OrderProductResponseDto> save) {
