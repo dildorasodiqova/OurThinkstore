@@ -4,6 +4,7 @@ import lombok.RequiredArgsConstructor;
 import org.modelmapper.ModelMapper;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageRequest;
+import org.springframework.data.domain.Sort;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 import uz.cosinus.thinkstore.dto.createDto.CategoryCreateDto;
@@ -29,7 +30,7 @@ public class CategoryServiceImpl implements CategoryService {
 
     @Override
     public CategoryResponseDto getById(UUID categoryId) {
-        Optional<CategoryEntity> categoryBy = categoryRepository.getCategoryEntitiesById(categoryId);
+        Optional<CategoryEntity> categoryBy = categoryRepository.findById(categoryId);
         if (categoryBy.isEmpty()) {
             throw new DataNotFoundException("Category not found");
         } else {
@@ -45,10 +46,11 @@ public class CategoryServiceImpl implements CategoryService {
     @Override
     public List<CategoryResponseDto> getAll(String word, int page, int size) {
         Page<CategoryEntity> result;
-        if (!word.isEmpty()) {
-            result = categoryRepository.findAllByNameContainingIgnoreCaseAndIsActiveTrue(word, PageRequest.of(page, size));
+        if (Optional.ofNullable(word).isPresent()) {
+            result = categoryRepository.findAllByNameContainingIgnoreCaseAndIsActiveTrueOrderByCreatedDateDesc(word, PageRequest.of(page, size));
         } else {
-            result = categoryRepository.findAllByIsActiveTrue(PageRequest.of(page, size));
+            Sort sort = Sort.by("createdDate").descending(); // Sort by createdDate in descending order
+            result = categoryRepository.findAllByIsActiveTrue(PageRequest.of(page, size, sort));
         }
         return mapToDtoList(result.getContent());
     }

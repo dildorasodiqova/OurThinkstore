@@ -16,9 +16,6 @@ public class FeedBackCreateDto {
     @NotNull(message = "Product cannot be empty !")
     private UUID productId;
 
-    @NotNull(message = "User cannot be empty !")
-    private UUID userId;
-
     private int rate;
     private String text;
 }

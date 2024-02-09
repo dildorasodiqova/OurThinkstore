@@ -14,8 +14,6 @@ import java.util.UUID;
 @Getter
 @Setter
 public class BasketProductCreateDto {
-    @NotNull(message = "User cannot be empty !")
-    private UUID userId;
 
     @NotNull(message = "Product cannot be empty !")
     private UUID productId;

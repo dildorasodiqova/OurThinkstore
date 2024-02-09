@@ -16,6 +16,7 @@ import uz.cosinus.thinkstore.service.userService.UserService;
 
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Objects;
 import java.util.UUID;
 
 @Service
@@ -27,11 +28,11 @@ public class FeedbackServiceImpl implements FeedbackService {
     private final ModelMapper modelMapper;
 
     @Override
-    public FeedbackResponseDto create(FeedBackCreateDto dto) {
+    public FeedbackResponseDto create(FeedBackCreateDto dto, UUID userId) {
         if (dto.getText().isEmpty() && dto.getRate() == 0) {
             throw  new BadRequestException("Feedback cannot be empty !");
         }
-        return parse(feedBackRepository.save(parse(dto)));
+        return parse(feedBackRepository.save(parse(dto, userId)));
     }
 
 
@@ -43,7 +44,7 @@ public class FeedbackServiceImpl implements FeedbackService {
 
     @Override
     public List<FeedbackResponseDto> feedbacksOfProduct(UUID productId) {
-        List<FeedbackEntity> allByProductId = feedBackRepository.findAllByProductId(productId);
+        List<FeedbackEntity> allByProductId = feedBackRepository.findAllByProductIdOrderByCreatedDateDesc(productId);
         List<FeedbackResponseDto> list = new ArrayList<>();
         for (FeedbackEntity feedback : allByProductId) {
             list.add(parse(feedback));
@@ -64,11 +65,15 @@ public class FeedbackServiceImpl implements FeedbackService {
     }
 
     @Override
-    public FeedbackResponseDto update(UUID feedbackId, String text) {
+    public FeedbackResponseDto update(UUID feedbackId, String text, UUID currentUserId) {
         FeedbackEntity feedback = feedBackRepository.findById(feedbackId).orElseThrow(() -> new DataNotFoundException("Feedback not found !"));
-        feedback.setText(text);
-        feedBackRepository.save(feedback);
-        return parse(feedback);
+        if (Objects.equals(feedback.getUser().getId(), currentUserId)) {
+            feedback.setText(text);
+            feedBackRepository.save(feedback);
+            return parse(feedback);
+        }else {
+            throw new BadRequestException("You can only update feedbacks that belong to you.");
+        }
     }
 
     private FeedbackResponseDto parse(FeedbackEntity dto){
@@ -78,9 +83,9 @@ public class FeedbackServiceImpl implements FeedbackService {
         return map;
     }
 
-    private FeedbackEntity parse(FeedBackCreateDto dto){
+    private FeedbackEntity parse(FeedBackCreateDto dto, UUID userId){
         ProductEntity productId = productService.findById(dto.getProductId());
-        UserEntity user = userService.findById(dto.getUserId());
+        UserEntity user = userService.findById(userId);
         return new FeedbackEntity(productId, user, dto.getRate(), dto.getText());
     }
 

@@ -19,8 +19,8 @@ public class BasketProductController {
     private final BasketProductService basketProductService;
     @PreAuthorize("hasAuthority('USER')")
     @PostMapping("/add")
-    public ResponseEntity<BasketProductResponseDto> add(@RequestBody BasketProductCreateDto dto){
-        return ResponseEntity.ok(basketProductService.create(dto));
+    public ResponseEntity<BasketProductResponseDto> add(@RequestBody BasketProductCreateDto dto, Principal principal){
+        return ResponseEntity.ok(basketProductService.create(dto, UUID.fromString(principal.getName())));
     }
 
     @PreAuthorize("hasAuthority('USER')")
@@ -31,8 +31,8 @@ public class BasketProductController {
 
     @PreAuthorize("hasAuthority('USER')")
     @PutMapping("/basketController/updateCount/{productId}")
-    public ResponseEntity<BasketProductResponseDto> updateCount(@PathVariable UUID productId, @RequestParam UUID basketId, int count){
-        return ResponseEntity.ok(basketProductService.updateProductCount(productId,basketId, count));
+    public ResponseEntity<BasketProductResponseDto> updateCount(@PathVariable UUID productId,@RequestParam int count, Principal principal){
+        return ResponseEntity.ok(basketProductService.updateProductCount(productId,UUID.fromString(principal.getName()), count));
     }
 
     @PreAuthorize("hasAuthority('ADMIN')")

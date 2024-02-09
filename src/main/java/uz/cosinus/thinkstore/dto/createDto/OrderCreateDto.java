@@ -14,8 +14,5 @@ import java.util.UUID;
 @Getter
 @Setter
 public class OrderCreateDto {
-    @NotNull(message = "User cannot be empty !")
-    private UUID userId;
-
     private List<OrderProductCreateDto> products;
 }

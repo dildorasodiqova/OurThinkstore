@@ -14,7 +14,7 @@ public interface AttachmentService {
     byte[] open_general(UUID fileName);
     ResponseEntity<Resource> download(UUID fileName);
     AttachmentEntity findById(UUID id);
-    String getUrl(String fileName);
+    String getUrl(UUID fileName);
     ApiResponse<?> delete(UUID id);
 
 }
