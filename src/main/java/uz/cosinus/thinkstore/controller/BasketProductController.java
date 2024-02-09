@@ -1,5 +1,6 @@
 package uz.cosinus.thinkstore.controller;
 
+import jakarta.annotation.security.PermitAll;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.access.prepost.PreAuthorize;
@@ -35,7 +36,7 @@ public class BasketProductController {
         return ResponseEntity.ok(basketProductService.updateProductCount(productId,UUID.fromString(principal.getName()), count));
     }
 
-    @PreAuthorize("hasAuthority('ADMIN')")
+    @PermitAll
     @GetMapping("/get-all")
     public List<BasketProductResponseDto> getAll(
             @RequestParam(value = "page", defaultValue = "0")

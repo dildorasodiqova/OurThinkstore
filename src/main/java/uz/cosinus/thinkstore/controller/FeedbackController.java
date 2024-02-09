@@ -1,5 +1,6 @@
 package uz.cosinus.thinkstore.controller;
 
+import jakarta.annotation.security.PermitAll;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.access.prepost.PreAuthorize;
@@ -23,7 +24,7 @@ public class FeedbackController {
         return ResponseEntity.ok(feedbackService.create(createDTO, UUID.fromString(principal.getName())));
     }
 
-    @PreAuthorize("hasAuthority('ADMIN') or hasAuthority('USER')")
+    @PermitAll
     @GetMapping("/getById/{feedbackId}")
     public ResponseEntity<FeedbackResponseDto> getById(@PathVariable UUID feedbackId){
         return ResponseEntity.ok(feedbackService.findById(feedbackId));
@@ -42,7 +43,7 @@ public class FeedbackController {
     }
 
 
-    @PreAuthorize("hasAuthority('ADMIN') or hasAuthority('USER')")
+    @PermitAll
     @GetMapping("/feedbacksOfProduct/{productId}")
     public ResponseEntity<List<FeedbackResponseDto>> feedbacksOfProduct(@PathVariable UUID productId){
         return ResponseEntity.ok(feedbackService.feedbacksOfProduct(productId));

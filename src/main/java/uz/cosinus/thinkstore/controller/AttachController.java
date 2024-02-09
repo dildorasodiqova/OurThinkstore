@@ -26,6 +26,7 @@ import java.util.UUID;
 public class AttachController {
     private final AttachmentService attachmentService;
 
+    @PreAuthorize("hasAuthority('ADMIN')")
     @PostMapping("/upload")
     public ResponseEntity<AttachResDTO> create(@RequestParam("file") MultipartFile file, Principal principal) {
         log.info("upload attach  = {}", file.getOriginalFilename()); // console un

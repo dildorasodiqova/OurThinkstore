@@ -1,5 +1,6 @@
 package uz.cosinus.thinkstore.controller;
 
+import jakarta.annotation.security.PermitAll;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.access.prepost.PreAuthorize;
@@ -38,7 +39,7 @@ public class ProductController {
     }
 
 
-    @PreAuthorize("hasAuthority('ADMIN') or hasAuthority('USER')")
+    @PermitAll
     @GetMapping("/all-by-Category/{categoryId}")
     public ResponseEntity<List<ProductResponseDto>> getAllByCategory(
             @PathVariable UUID categoryId,
@@ -58,7 +59,7 @@ public class ProductController {
     }
 
 
-    @PreAuthorize("hasAuthority('ADMIN') or hasAuthority('USER')")
+    @PermitAll
     @GetMapping("/getAll")
     public ResponseEntity<List<ProductResponseDto>>getAll(
             @RequestParam String word,

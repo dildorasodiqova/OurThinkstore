@@ -1,5 +1,6 @@
 package uz.cosinus.thinkstore.controller;
 
+import jakarta.annotation.security.PermitAll;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.access.prepost.PreAuthorize;
@@ -36,19 +37,19 @@ public class CategoryController {
         return ResponseEntity.ok(categoryService.updateActive(categoryId, Boolean.valueOf(trueOrFalse)));
     }
 
-    @PreAuthorize("hasAuthority('ADMIN') or hasAuthority('USER')")
+    @PermitAll
     @GetMapping("/firstCategory")
     private ResponseEntity<List<CategoryResponseDto>> firstCategory(){
         return ResponseEntity.ok(categoryService.firstCategories());
     }
 
-    @PreAuthorize("hasAuthority('ADMIN') or hasAuthority('USER')")
+    @PermitAll
     @GetMapping("getById/{categoryId}")
     public ResponseEntity<CategoryResponseDto> getById(@PathVariable UUID categoryId){
         return ResponseEntity.ok(categoryService.getById(categoryId));
     }
 
-    @PreAuthorize("hasAuthority('ADMIN') or hasAuthority('USER')")
+    @PermitAll
     @GetMapping("/getAll")
     public ResponseEntity<List<CategoryResponseDto>> getAll(
             @RequestParam String word,
@@ -57,6 +58,7 @@ public class CategoryController {
         return ResponseEntity.ok(categoryService.getAll(word, page,size));
     }
 
+    @PermitAll
     @PreAuthorize("hasAuthority('ADMIN') or hasAuthority('USER')")
     @GetMapping("/sub/{categoryId}")
     public ResponseEntity<List<CategoryResponseDto>> getSubCategories(@PathVariable UUID categoryId){
