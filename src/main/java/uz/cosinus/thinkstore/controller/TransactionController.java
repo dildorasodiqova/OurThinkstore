@@ -40,13 +40,11 @@ public class TransactionController {
         return new ResponseEntity<>(transactions, HttpStatus.OK);
     }
 
-
     @PreAuthorize("hasAuthority('ADMIN')")
     @GetMapping("/getById/{transactionId}")
     public ResponseEntity<TransactionResponseDto> getTransactionById(@PathVariable UUID transactionId) {
         return new ResponseEntity<>(transactionService.getTransactionById(transactionId), HttpStatus.OK);
     }
-
 
     @PreAuthorize("hasAuthority('USER')")
     @GetMapping("/transactionsOfUser")
