@@ -6,6 +6,7 @@ import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.web.bind.annotation.*;
 import uz.cosinus.thinkstore.dto.createDto.OrderCreateDto;
 import uz.cosinus.thinkstore.dto.responseDto.OrderResponseDto;
+import uz.cosinus.thinkstore.enums.OrderStatus;
 import uz.cosinus.thinkstore.service.orderService.OrderService;
 
 import java.security.Principal;
@@ -36,6 +37,11 @@ public class OrderController {
         return ResponseEntity.ok(orderService.update(orderId, dto));
     }
 
+    @PreAuthorize("hasAuthority('ADMIN')")
+    @PutMapping("/updateStatus/{orderId}")
+    public ResponseEntity<OrderResponseDto> updateStatus(@PathVariable UUID orderId,@RequestParam String status,  Principal principal){
+        return ResponseEntity.ok(orderService.updateStatus(orderId, OrderStatus.valueOf(status), UUID.fromString(principal.getName())));
+    }
 
     @PreAuthorize("hasAuthority('USER')")
     @DeleteMapping("/cancel/{orderId}")
