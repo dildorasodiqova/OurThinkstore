@@ -25,7 +25,6 @@ import static uz.cosinus.thinkstore.enums.OrderStatus.NEW;
 @RequiredArgsConstructor
 public class OrderServiceImpl implements OrderService {
     private final OrderRepository orderRepository;
-    private final OrderProductRepository orderProductRepository;
     private final UserRepository userRepository;
     private final OrderProductService orderProductService;
 
@@ -71,6 +70,11 @@ public class OrderServiceImpl implements OrderService {
         orderRepository.save(order);
         List<OrderProductResponseDto> update = orderProductService.update(dto.getProducts(), order);
         return parse(order, update);
+    }
+
+    @Override
+    public OrderEntity findById(UUID orderId) {
+       return orderRepository.findById(orderId).orElseThrow(() -> new DataNotFoundException("Order not found"));
     }
 
     private OrderResponseDto parse(OrderEntity order, List<OrderProductResponseDto> save) {

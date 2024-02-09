@@ -11,6 +11,7 @@ import uz.cosinus.thinkstore.dto.responseDto.TransactionResponseDto;
 import uz.cosinus.thinkstore.entity.TransactionEntity;
 import uz.cosinus.thinkstore.service.transactionService.TransactionService;
 
+import java.security.Principal;
 import java.util.List;
 import java.util.UUID;
 
@@ -41,9 +42,15 @@ public class TransactionController {
 
 
     @PreAuthorize("hasAuthority('ADMIN')")
-    @GetMapping("/{transactionId}")
+    @GetMapping("/getById/{transactionId}")
     public ResponseEntity<TransactionResponseDto> getTransactionById(@PathVariable UUID transactionId) {
-        TransactionResponseDto transaction = transactionService.getTransactionById(transactionId);
-        return new ResponseEntity<>(transaction, HttpStatus.OK);
+        return new ResponseEntity<>(transactionService.getTransactionById(transactionId), HttpStatus.OK);
+    }
+
+
+    @PreAuthorize("hasAuthority('USER')")
+    @GetMapping("/transactionsOfUser")
+    public ResponseEntity<List<TransactionResponseDto>> transactionsOfUser(Principal principal){
+        return ResponseEntity.ok(transactionService.transactionsOfUser(UUID.fromString(principal.getName())));
     }
 }

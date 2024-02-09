@@ -12,4 +12,5 @@ public interface TransactionService {
     List<TransactionResponseDto> getAllTransactions(int page, int size);
     TransactionResponseDto getTransactionById(UUID transactionId);
 
+    List<TransactionResponseDto> transactionsOfUser(UUID uuid);
 }

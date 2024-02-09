@@ -1,6 +1,5 @@
 package uz.cosinus.thinkstore.service.transactionService;
 
-import com.google.zxing.NotFoundException;
 import lombok.RequiredArgsConstructor;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageRequest;
@@ -8,6 +7,8 @@ import org.springframework.stereotype.Service;
 import uz.cosinus.thinkstore.dto.createDto.TransactionCreateDto;
 import uz.cosinus.thinkstore.dto.responseDto.TransactionResponseDto;
 import uz.cosinus.thinkstore.entity.TransactionEntity;
+import uz.cosinus.thinkstore.enums.PaymentType;
+import uz.cosinus.thinkstore.enums.TransactionStatus;
 import uz.cosinus.thinkstore.exception.DataNotFoundException;
 import uz.cosinus.thinkstore.repository.TransactionRepository;
 import uz.cosinus.thinkstore.service.orderService.OrderService;
@@ -24,8 +25,8 @@ public class TransactionServiceImpl implements TransactionService {
 
     public TransactionResponseDto createTransaction(TransactionCreateDto transactionCreateDto) {
         TransactionEntity transactionEntity = mapToEntity(transactionCreateDto);
-         transactionRepository.save(transactionEntity);
-         return parse(transactionEntity);
+        transactionRepository.save(transactionEntity);
+        return mapToDto(transactionEntity);
     }
 
     public List<TransactionResponseDto> getAllTransactions(int page, int size) {
@@ -39,14 +40,19 @@ public class TransactionServiceImpl implements TransactionService {
         return mapToDto(transactionEntity);
     }
 
-    // Other methods such as updateTransaction, deleteTransaction, etc.
+    @Override
+    public List<TransactionResponseDto> transactionsOfUser(UUID userId) {
+        List<TransactionEntity> all = transactionRepository.transactionsOfUser(userId);
+        return mapToDtoList(all);
+    }
+
 
     private TransactionEntity mapToEntity(TransactionCreateDto transactionCreateDto) {
         TransactionEntity transactionEntity = new TransactionEntity();
-        transactionEntity.setOrder(orderService.getOrderById(transactionCreateDto.getOrderId()));
+        transactionEntity.setOrder(orderService.findById(transactionCreateDto.getOrderId()));
         transactionEntity.setPrice(transactionCreateDto.getPrice());
         transactionEntity.setPaymentType(PaymentType.valueOf(transactionCreateDto.getPaymentType()));
-        transactionEntity.setStatus(TransactionStatus.PENDING); // Set default status
+        transactionEntity.setStatus(TransactionStatus.CREATED); // shuyerda created deyishim togrimi
         return transactionEntity;
     }
 
