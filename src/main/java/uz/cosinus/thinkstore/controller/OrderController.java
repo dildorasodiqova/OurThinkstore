@@ -17,6 +17,7 @@ import java.util.UUID;
 public class OrderController {
     private final OrderService orderService;
 
+    @PreAuthorize(" hasAuthority('USER')")
     @PostMapping("/create")
     public ResponseEntity<OrderResponseDto> create(@RequestBody OrderCreateDto createDto, Principal principal) {
         return ResponseEntity.ok(orderService.add(createDto, UUID.fromString(principal.getName())));

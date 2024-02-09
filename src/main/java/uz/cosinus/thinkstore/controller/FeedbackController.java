@@ -17,11 +17,13 @@ import java.util.UUID;
 @RequestMapping("/api/v1/feedback")
 public class FeedbackController {
     private final FeedbackService feedbackService;
+    @PreAuthorize("hasAuthority('USER')")
     @PostMapping("/create")
     public ResponseEntity<FeedbackResponseDto> create(@RequestBody FeedBackCreateDto createDTO, Principal principal) {
         return ResponseEntity.ok(feedbackService.create(createDTO, UUID.fromString(principal.getName())));
     }
 
+    @PreAuthorize("hasAuthority('ADMIN') or hasAuthority('USER')")
     @GetMapping("/getById/{feedbackId}")
     public ResponseEntity<FeedbackResponseDto> getById(@PathVariable UUID feedbackId){
         return ResponseEntity.ok(feedbackService.findById(feedbackId));
@@ -33,11 +35,14 @@ public class FeedbackController {
         return ResponseEntity.ok(feedbackService.update(feedbackId, text, UUID.fromString(principal.getName())));
     }
 
+    @PreAuthorize("hasAuthority('USER') or hasAuthority('ADMIN')")
     @DeleteMapping("/delete/{feedbackId}")
     public ResponseEntity<String> delete(@PathVariable UUID feedbackId, Principal principal) {
         return ResponseEntity.ok(feedbackService.delete(feedbackId, UUID.fromString(principal.getName())));
     }
 
+
+    @PreAuthorize("hasAuthority('ADMIN') or hasAuthority('USER')")
     @GetMapping("/feedbacksOfProduct/{productId}")
     public ResponseEntity<List<FeedbackResponseDto>> feedbacksOfProduct(@PathVariable UUID productId){
         return ResponseEntity.ok(feedbackService.feedbacksOfProduct(productId));

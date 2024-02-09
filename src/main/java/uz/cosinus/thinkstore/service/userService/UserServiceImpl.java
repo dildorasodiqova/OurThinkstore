@@ -17,7 +17,6 @@ import uz.cosinus.thinkstore.dto.responseDto.UserResponseDto;
 import uz.cosinus.thinkstore.entity.UserEntity;
 import uz.cosinus.thinkstore.exception.DataAlreadyExistsException;
 import uz.cosinus.thinkstore.exception.DataNotFoundException;
-import uz.cosinus.thinkstore.repository.PasswordRepository;
 import uz.cosinus.thinkstore.repository.UserRepository;
 import uz.cosinus.thinkstore.service.jwt.JwtService;
 
