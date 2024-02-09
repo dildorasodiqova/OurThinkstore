@@ -41,29 +41,7 @@ public class AuthController {
         return userService.getAccessToken(refreshToken, UUID.fromString(principal.getName()));
     }
 
-    @PostMapping("/forget-password")
-    public ResponseEntity<String> forgetPassword(@RequestBody ForgetDto forgetDto) {
-        return ResponseEntity.ok(userService.forgetPassword(forgetDto));
-    }
-
-    @PermitAll
-    @PostMapping("/get-verification-code")
-    public String sendVerifyCode(@RequestBody String email) {
-        return userService.getVerificationCode(email);
-    }
-
-    @Operation(
-            description = "This API is used for verifying",
-            method = "GET method is supported",
-            security = @SecurityRequirement(name = "pre authorize", scopes = {"USER"})
-    )
-    @PermitAll
-    @PostMapping("/verify")
-    public UserResponseDto verify(@RequestBody VerifyDto verifyDto) {
-        return userService.verify(verifyDto);
-    }
-
-    @PermitAll
+     @PermitAll
     @GetMapping("/verify-token")
     public SubjectDto verifyToken(@RequestBody String token) {
         return userService.verifyToken(token);
