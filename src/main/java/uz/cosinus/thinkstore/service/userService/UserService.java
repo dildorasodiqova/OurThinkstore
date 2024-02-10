@@ -19,8 +19,5 @@ public interface UserService {
     List<UserResponseDto> getAll(Integer page, Integer size);
     String getAccessToken(String refreshToken, UUID userId);
     JwtResponse signIn(VerifyDtoP verifyDtoP);
-//    String getVerificationCode(String email);
-//    UserResponseDto verify(VerifyDto verifyDto);
     SubjectDto verifyToken(String token);
-    String forgetPassword(ForgetDto forgetDto);
 }

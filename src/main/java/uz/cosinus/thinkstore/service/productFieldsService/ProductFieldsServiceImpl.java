@@ -14,6 +14,7 @@ import uz.cosinus.thinkstore.entity.ProductFields;
 import uz.cosinus.thinkstore.exception.BadRequestException;
 import uz.cosinus.thinkstore.exception.DataNotFoundException;
 import uz.cosinus.thinkstore.repository.ProductFieldsRepository;
+import uz.cosinus.thinkstore.repository.ProductRepository;
 import uz.cosinus.thinkstore.service.productFieldValues.ProductFieldValuesService;
 import uz.cosinus.thinkstore.service.productService.ProductService;
 
@@ -26,7 +27,7 @@ import java.util.UUID;
 public class ProductFieldsServiceImpl implements ProductFieldsService {
     private final ProductFieldsRepository productFieldsRepository;
     private final ProductFieldValuesService productFieldValuesService;
-    private final ProductService productService;
+    private final ProductRepository productRepository;
     @Override
     public String create(UUID productID, List<ProductFieldsCreateDto> dto) {
         for (ProductFieldsCreateDto cr : dto) {
@@ -71,12 +72,15 @@ public class ProductFieldsServiceImpl implements ProductFieldsService {
 
     private ProductFieldsResponseDto parse(ProductFields field){
         List<ProductFieldValuesResponseDto> all = productFieldValuesService.findAllByFieldId(field.getId());
-        ProductResponseDto product = productService.getById(field.getProduct().getId());
-        return new ProductFieldsResponseDto(field.getId(), all, field.getName(), product, field.getCreatedDate()); /// shunda 2 chi fieldni qanday topay
+           return new ProductFieldsResponseDto(field.getId(),
+                all,
+                field.getName(),
+                field.getProduct().getId(),
+                field.getCreatedDate()); /// shunda 2 chi fieldni qanday topay
     }
 
     private ProductFields parse(ProductFieldsCreateDto dto){
-        ProductEntity product = productService.findById(dto.getProductId());
+        ProductEntity product = productRepository.findById(dto.getProductId()).orElseThrow(()-> new DataNotFoundException("Product not found !"));
         return new ProductFields(dto.getName(),product);
     }
 
@@ -84,8 +88,12 @@ public class ProductFieldsServiceImpl implements ProductFieldsService {
         List<ProductFieldsResponseDto> list  = new ArrayList<>();
         for (ProductFields fields : all) {
             List<ProductFieldValuesResponseDto> all1 = productFieldValuesService.findAllByFieldId(fields.getId());
-            ProductResponseDto pr = productService.getById(fields.getProduct().getId());
-            list.add(new ProductFieldsResponseDto(fields.getId(), all1, fields.getName(),pr, fields.getCreatedDate()));
+            list.add(new ProductFieldsResponseDto(
+                    fields.getId(),
+                    all1,
+                    fields.getName(),
+                    fields.getProduct().getId(),
+                    fields.getCreatedDate()));
         }
         return list;
     }

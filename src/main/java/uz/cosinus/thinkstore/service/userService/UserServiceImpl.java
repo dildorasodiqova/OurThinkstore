@@ -29,7 +29,6 @@ import java.util.UUID;
 @RequiredArgsConstructor
 public class UserServiceImpl implements  UserService{
     private final UserRepository userRepository;
-    private final PasswordRepository passwordRepository;
     private final PasswordEncoder passwordEncoder;
     private final JwtService jwtService;
     private final ModelMapper modelMapper;
@@ -48,7 +47,6 @@ public class UserServiceImpl implements  UserService{
         UserEntity user = modelMapper.map(dto, UserEntity.class);
         user.setPassword(passwordEncoder.encode(user.getPassword()));
         userRepository.save(user);
-//        emailSend(user);
         return parse(user);
     }
 
@@ -68,31 +66,6 @@ public class UserServiceImpl implements  UserService{
         throw new AuthenticationCredentialsNotFoundException("Not verified");
     }
 
-//    @Override
-//    public String getVerificationCode(String email) {
-//        UserEntity user = userRepository.findByEmail(email)
-//                .orElseThrow(() -> new DataNotFoundException("User not found with email: " + email));
-//        emailSend(user);
-//        return "Verify code sent";
-//    }
-
-//    @Override
-//    public UserResponseDto verify(VerifyDto verifyDto) {
-//        UserEntity userEntity = userRepository.findByPhoneNumber(verifyDto.getEmail());
-//                .orElseThrow(() -> new DataNotFoundException("User not found with email: " + verifyDto.getEmail()));
-//        UserPassword passwords = passwordRepository.getUserPasswordById(userEntity.getId(),verifyDto.getCode())
-//                .orElseThrow(()-> new DataNotFoundException("Code is not found"));
-//        LocalDateTime currentTime = LocalDateTime.now();
-//        LocalDateTime sentDate = passwords.getSentDate();
-//        Duration duration = Duration.between(sentDate, currentTime);
-//        long minutes = duration.toMinutes();
-//        if(minutes <= passwords.getExpiry()) {
-//            userEntity.setIsAuthenticated(true);
-//            userRepository.save(userEntity);
-//            return parse(userEntity);
-//        }
-//        throw new AuthenticationCredentialsNotFoundException("Code is expired");
-//    }
 
     @Override
     public SubjectDto verifyToken(String token) {
@@ -114,18 +87,6 @@ public class UserServiceImpl implements  UserService{
         Page<UserEntity> users = userRepository.findAllByIsActiveTrue(pageRequest);
         List<UserEntity> content = users.getContent();
         return parse(content);
-    }
-    @Override
-    public String forgetPassword(ForgetDto forgetDto) {
-        UserEntity userEntity = userRepository.findByPhoneNumber(forgetDto.getPhoneNumber())
-                .orElseThrow(() -> new DataNotFoundException("User not found with email: "));
-        userEntity.setPassword(forgetDto.getNewPassword());
-        userRepository.save(userEntity);
-
-//        throw new AuthenticationCredentialsNotFoundException("Code expired");
-        return null;
-
-        //shuyerda bu method kkmi ozi kkmasmi 🤷‍♀️
     }
 
 

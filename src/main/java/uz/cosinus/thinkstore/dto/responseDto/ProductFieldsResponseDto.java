@@ -16,7 +16,7 @@ public class ProductFieldsResponseDto {
     private UUID id;
     private List<ProductFieldValuesResponseDto> productFieldValues;
     private String name;
-    private ProductResponseDto product;
+    private UUID productId;
     private LocalDateTime createdDate;
 
 

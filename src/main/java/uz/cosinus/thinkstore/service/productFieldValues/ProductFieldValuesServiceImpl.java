@@ -11,6 +11,8 @@ import uz.cosinus.thinkstore.entity.ProductFieldValues;
 import uz.cosinus.thinkstore.entity.ProductFields;
 import uz.cosinus.thinkstore.exception.DataNotFoundException;
 import uz.cosinus.thinkstore.repository.ProductFieldValuesRepository;
+import uz.cosinus.thinkstore.repository.ProductFieldsRepository;
+import uz.cosinus.thinkstore.repository.ProductRepository;
 import uz.cosinus.thinkstore.service.productFieldsService.ProductFieldsService;
 import uz.cosinus.thinkstore.service.productService.ProductService;
 
@@ -22,8 +24,8 @@ import java.util.UUID;
 @RequiredArgsConstructor
 public class ProductFieldValuesServiceImpl implements ProductFieldValuesService{
     private final ProductFieldValuesRepository productFieldValuesRepository;
-    private final ProductFieldsService productFieldsService;
-    private final ProductService productService;
+    private final ProductFieldsRepository productFieldsRepository;
+    private final ProductRepository productRepository;
     @Override
     public String create(List<ProductFieldValuesCreateDto> dtos) {
         for (ProductFieldValuesCreateDto cr : dtos) {
@@ -68,8 +70,8 @@ public class ProductFieldValuesServiceImpl implements ProductFieldValuesService{
 
 
     private ProductFieldValues parse(ProductFieldValuesCreateDto dto){
-        ProductFields productFields = productFieldsService.findById(dto.getProductFieldId());
-        ProductEntity product = productService.findById(dto.getProductId());
+        ProductFields productFields = productFieldsRepository.findById(dto.getProductFieldId()).orElseThrow(()-> new DataNotFoundException("Field not found !"));
+        ProductEntity product = productRepository.findById(dto.getProductId()).orElseThrow(()-> new DataNotFoundException("Product not found !"));
         return new ProductFieldValues(dto.getValue(), productFields, product);
     }
 

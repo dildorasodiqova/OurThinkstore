@@ -37,3 +37,8 @@ springdoc:
 server:
   port: 8081
   url: http://localhost:8081
+
+jwt:
+  access_expiry: 300000  # 5 minutes (5 minutes * 60 seconds/minute)
+  refresh_expiry: 86400000  # 1 day (60 seconds/minute * 60 minutes/hour * 24 hours/day)
+  secret: kjnkjnkjnkjnknknkkjkjkjnkefnbinefbindf
