@@ -50,6 +50,12 @@ public class ProductFieldsServiceImpl implements ProductFieldsService {
     }
 
     @Override
+    public List<ProductFieldsResponseDto> getFieldsOfProducts(UUID id){
+        return productFieldsRepository.findAllByProductId(id).stream().map(this::parse).toList();
+    }
+
+
+    @Override
     public ProductFieldsResponseDto getById(UUID productFieldId) {
         ProductFields field = productFieldsRepository.findById(productFieldId).orElseThrow(() -> new DataNotFoundException("Field not found !"));
         return parse(field);
@@ -76,7 +82,7 @@ public class ProductFieldsServiceImpl implements ProductFieldsService {
                 all,
                 field.getName(),
                 field.getProduct().getId(),
-                field.getCreatedDate()); /// shunda 2 chi fieldni qanday topay
+                   field.getCreatedDate().toLocalDateTime()); /// shunda 2 chi fieldni qanday topay
     }
 
     private ProductFields parse(ProductFieldsCreateDto dto){
@@ -93,7 +99,7 @@ public class ProductFieldsServiceImpl implements ProductFieldsService {
                     all1,
                     fields.getName(),
                     fields.getProduct().getId(),
-                    fields.getCreatedDate()));
+                    fields.getCreatedDate().toLocalDateTime()));
         }
         return list;
     }

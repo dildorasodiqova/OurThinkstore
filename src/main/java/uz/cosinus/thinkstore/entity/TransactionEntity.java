@@ -15,6 +15,7 @@ import java.time.LocalDateTime;
 @Getter
 @Setter
 @Entity(name = "transaction")
+@Table(name = "transactions")
 public class TransactionEntity extends BaseEntity{
     @JoinColumn(name = "order_id")
     @ManyToOne(cascade = CascadeType.ALL, fetch = FetchType.EAGER)

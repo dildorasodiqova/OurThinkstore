@@ -12,4 +12,6 @@ public interface ProductFieldsService {
     ProductFieldsResponseDto getById(UUID productFieldId);
     ProductFieldsResponseDto updateActive(UUID productFieldId, Boolean trueOrFalse);
     List<ProductFieldsResponseDto> getALl(int page, int size);
+
+    List<ProductFieldsResponseDto> getFieldsOfProducts(UUID id);
 }

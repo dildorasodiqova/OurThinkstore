@@ -11,6 +11,7 @@ import lombok.NoArgsConstructor;
 @Data
 @Builder
 @Entity(name = "basketProduct")
+@Table(name = "basket_product")
 public class BasketProductEntity extends BaseEntity{
 
     @JoinColumn(name = "user_id")

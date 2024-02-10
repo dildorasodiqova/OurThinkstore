@@ -8,6 +8,7 @@ import org.springframework.web.bind.annotation.*;
 import uz.cosinus.thinkstore.dto.createDto.ProductLikeCreateDto;
 import uz.cosinus.thinkstore.service.productLikeService.ProductLikeService;
 
+import java.security.Principal;
 import java.util.UUID;
 
 @RestController
@@ -18,8 +19,8 @@ public class ProductLikeController {
 
     @PreAuthorize("hasAuthority('USER')")
     @PostMapping("/create")
-    public ResponseEntity<String> create(@RequestBody ProductLikeCreateDto dto){
-        return ResponseEntity.ok(productLikeService.create(dto));
+    public ResponseEntity<String> create(@RequestBody ProductLikeCreateDto dto, Principal principal){
+        return ResponseEntity.ok(productLikeService.create(dto, UUID.fromString(principal.getName())));
     }
 
     @PermitAll

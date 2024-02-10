@@ -36,7 +36,7 @@ public class CategoryServiceImpl implements CategoryService {
         } else {
             CategoryEntity category = categoryBy.get();
             CategoryResponseDto map = modelMapper.map(category, CategoryResponseDto.class);
-            map.setParentId(category.getParent().getId());
+            map.setParentId(category.getParentId());
             map.setPhotoId(category.getPhoto().getId());
             return map;
         }
@@ -114,7 +114,7 @@ public class CategoryServiceImpl implements CategoryService {
 
     @Override
     public List<CategoryResponseDto> subCategories(UUID parentId) {
-        List<CategoryEntity> categoriesByParentId = categoryRepository.getCategoriesByParent_Id(parentId);
+        List<CategoryEntity> categoriesByParentId = categoryRepository.getCategoriesByParentId(parentId);
         return parse(categoriesByParentId);
 
     }
@@ -126,18 +126,18 @@ public class CategoryServiceImpl implements CategoryService {
         category.setName(dto.getName());
 
         AttachmentEntity photo = attachmentService.findById(dto.getPhotoId());
-        ///buyerda ham rasm muommo
         category.setPhoto(photo);
-
-        CategoryEntity category1 = categoryRepository.findById(dto.getParentId()).orElseThrow(() -> new DataNotFoundException("Category not found"));
-        category.setParent(category1);
+        category.setParentId(dto.getParentId());
 
         return parse(category);
     }
 
     @Override
     public CategoryResponseDto updateActive(UUID categoryId, Boolean aBoolean) {
-        return null;
+        CategoryEntity category = categoryRepository.findById(categoryId).orElseThrow(() -> new DataNotFoundException("Category not found"));
+        category.setIsActive(aBoolean);
+        categoryRepository.save(category);
+        return parse(category);
     }
 
     private List<CategoryResponseDto> parse(List<CategoryEntity> category) {
@@ -146,18 +146,19 @@ public class CategoryServiceImpl implements CategoryService {
             if (category1.getIsActive()) {
                 CategoryResponseDto map = modelMapper.map(category1, CategoryResponseDto.class);
                 map.setPhotoId(category1.getPhoto().getId());
-                map.setParentId(category1.getParent().getId());
+                map.setParentId(category1.getParentId());
                 list.add(map);
             }
         }
         return list;
     }
     private CategoryResponseDto parse(CategoryEntity category){
-        return new CategoryResponseDto(category.getId(), category.getName(), category.getPhoto().getId(), category.getParent().getId(), category.getDescription(), category.getCreatedDate());
+        return new CategoryResponseDto(category.getId(), category.getName(), category.getPhoto().getId(), category.getParentId(), category.getDescription(), category.getCreatedDate().toLocalDateTime());
     }
 
     private CategoryEntity parse(CategoryCreateDto createDto) {
-        return modelMapper.map(createDto, CategoryEntity.class);
+        AttachmentEntity attachment = attachmentService.findById(createDto.getPhotoId());
+        return new CategoryEntity(createDto.getName(), attachment, createDto.getParentId(), createDto.getDescription());
     }
 
 }

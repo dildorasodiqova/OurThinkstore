@@ -9,4 +9,6 @@ public interface ProductPhotosService {
     List<ProductPhotosEntity> getByProductId(UUID productId);
 
     ProductPhotosEntity save(ProductPhotosEntity productPhotos);
+
+    List<UUID> getPhotosOfProduct(UUID id);
 }

@@ -27,7 +27,7 @@ public class ProductController {
 
     @PreAuthorize("hasAuthority('ADMIN')")
     @PutMapping("/update/{productId}")
-    public ResponseEntity<ProductResponseDto> update(@PathVariable UUID productId, @RequestParam ProductCreateDto dto){
+    public ResponseEntity<ProductResponseDto> update(@PathVariable UUID productId, @RequestBody ProductCreateDto dto){
         return ResponseEntity.ok(productService.update(productId, dto));
     }
 
@@ -63,7 +63,6 @@ public class ProductController {
     @GetMapping("/getAll")
     public ResponseEntity<List<ProductResponseDto>>getAll(
             @RequestParam String word,
-            @PathVariable UUID categoryId,
             @RequestParam(value = "page", defaultValue = "0")
             int page,
             @RequestParam(value = "size", defaultValue = "5")

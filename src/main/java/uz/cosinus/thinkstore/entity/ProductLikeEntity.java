@@ -11,8 +11,8 @@ import lombok.Setter;
 @Getter
 @Setter
 @Entity(name = "productLike")
-@Table(name = "product_ike")
-public class ProductLikeEntity extends BaseEntity {
+@Table(name = "product_like")
+public class  ProductLikeEntity extends BaseEntity {
     @JoinColumn(name = "user_id")
     @ManyToOne(cascade = CascadeType.ALL, fetch = FetchType.EAGER)
     private UserEntity user;

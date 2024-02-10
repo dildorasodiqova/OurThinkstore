@@ -3,6 +3,7 @@ package uz.cosinus.thinkstore.entity;
 import jakarta.persistence.Entity;
 import jakarta.persistence.EnumType;
 import jakarta.persistence.Enumerated;
+import jakarta.persistence.Table;
 import lombok.AllArgsConstructor;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
@@ -22,6 +23,7 @@ import static uz.cosinus.thinkstore.enums.UserRole.USER;
 @Getter
 @Setter
 @Entity(name = "users")
+@Table(name = "users")
 public class UserEntity  extends BaseEntity implements UserDetails {
     private String firstName;
     private String lastName;

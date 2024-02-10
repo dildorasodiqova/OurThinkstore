@@ -9,6 +9,7 @@ import lombok.*;
 @Setter
 @Builder
 @Entity(name= "product")
+@Table(name = "product")
 public class ProductEntity extends BaseEntity{
 
     @Column(unique = true)
@@ -22,7 +23,7 @@ public class ProductEntity extends BaseEntity{
     private Integer count;
 
     @JoinColumn(name = "category_id")
-    @ManyToOne(optional = false, fetch = FetchType.LAZY)
+    @ManyToOne(optional = false, fetch = FetchType.EAGER)
     private CategoryEntity category;
 
     private String brand;

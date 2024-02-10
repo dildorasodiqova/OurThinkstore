@@ -82,7 +82,7 @@ public class ProductFieldValuesServiceImpl implements ProductFieldValuesService{
                 values.getValue(),
                 values.getProductFields().getId(),
                 values.getProduct().getId(),
-                values.getCreatedDate());
+                values.getCreatedDate().toLocalDateTime());
     }
 
     private List<ProductFieldValuesResponseDto> parse(List<ProductFieldValues> all){
@@ -93,7 +93,7 @@ public class ProductFieldValuesServiceImpl implements ProductFieldValuesService{
                     values.getValue(),
                     values.getProductFields().getId(),
                     values.getProduct().getId(),
-                    values.getCreatedDate()));
+                    values.getCreatedDate().toLocalDateTime()));
         }
         return list;
     }
