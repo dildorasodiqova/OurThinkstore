@@ -1,5 +1,8 @@
 package uz.cosinus.thinkstore.controller;
 
+import io.swagger.v3.oas.annotations.Operation;
+import io.swagger.v3.oas.annotations.Parameter;
+import io.swagger.v3.oas.annotations.media.Content;
 import io.swagger.v3.oas.annotations.tags.Tag;
 import jakarta.annotation.security.PermitAll;
 import lombok.RequiredArgsConstructor;
@@ -26,8 +29,24 @@ import java.util.UUID;
 public class AttachController {
     private final AttachmentService attachmentService;
 
-    @PreAuthorize("hasAuthority('ADMIN')")
-    @PostMapping("/upload")
+
+//    @Operation(
+//            summary = "Small summary of the end-point",
+//            description = "A detailed description of the end-point",
+//            parameters = {
+//                    @Parameter(
+//                            description = "Some text",
+//                            content = @Content(
+//                                    mediaType = MediaType.APPLICATION_OCTET_STREAM_VALUE
+//                            ),
+//                            name = "file"
+//                    )
+//            }
+//    )
+
+    @PostMapping(value = {"/upload"}, consumes = {
+            MediaType.MULTIPART_FORM_DATA_VALUE
+    })
     public ResponseEntity<AttachResDTO> create(@RequestParam("file") MultipartFile file, Principal principal) {
         log.info("upload attach  = {}", file.getOriginalFilename()); // console un
         return ResponseEntity.ok(attachmentService.upload(file, UUID.fromString(principal.getName())));

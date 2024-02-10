@@ -28,7 +28,7 @@ public class OrderEntity  extends BaseEntity{
     private List<OrderProductEntity> orderProducts;
 
     @Enumerated(EnumType.STRING)
-    private OrderStatus status = OrderStatus.NEW;
+    private OrderStatus status = OrderStatus.CREATED;
 
     private boolean delivery; /// true bo'lsa uyiga yetkazgan bo'ladi, false bo'lsa punkitga
 

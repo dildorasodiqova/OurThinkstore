@@ -15,5 +15,5 @@ public interface OrderService {
 
     OrderEntity findById(UUID orderId);
 
-    OrderResponseDto updateStatus(UUID orderId, OrderStatus status, UUID currentUser);
+    String updateStatus(UUID orderId, OrderStatus status, UUID currentUser);
 }

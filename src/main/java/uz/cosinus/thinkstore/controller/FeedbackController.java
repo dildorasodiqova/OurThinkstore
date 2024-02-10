@@ -21,6 +21,7 @@ public class FeedbackController {
     @PreAuthorize("hasAuthority('USER')")
     @PostMapping("/create")
     public ResponseEntity<FeedbackResponseDto> create(@RequestBody FeedBackCreateDto createDTO, Principal principal) {
+        System.out.println(principal.getName());
         return ResponseEntity.ok(feedbackService.create(createDTO, UUID.fromString(principal.getName())));
     }
 

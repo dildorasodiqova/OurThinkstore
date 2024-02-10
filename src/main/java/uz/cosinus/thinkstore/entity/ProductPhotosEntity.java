@@ -10,7 +10,8 @@ import lombok.Setter;
 @NoArgsConstructor
 @Getter
 @Setter
-@Entity(name = "product_photos")
+@Entity(name = "productPhotos")
+@Table(name = "product_photos")
 public class ProductPhotosEntity extends BaseEntity{
     @JoinColumn(name = "product_id")
     @ManyToOne(optional = false,fetch = FetchType.LAZY)

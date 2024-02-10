@@ -11,6 +11,7 @@ import lombok.Setter;
 @Getter
 @Setter
 @Entity(name = "productFieldValue")
+@Table(name = "product_field_value")
 public class ProductFieldValues  extends BaseEntity{
     private String value;
 

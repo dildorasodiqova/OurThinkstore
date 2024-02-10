@@ -51,4 +51,10 @@ public class TransactionController {
     public ResponseEntity<List<TransactionResponseDto>> transactionsOfUser(Principal principal){
         return ResponseEntity.ok(transactionService.transactionsOfUser(UUID.fromString(principal.getName())));
     }
+
+    @PutMapping("/cancel/{transactionId}")
+    public ResponseEntity<TransactionResponseDto> cancel(@PathVariable UUID transactionId) {
+        return new ResponseEntity<>(transactionService.cancelTransaction(transactionId), HttpStatus.OK);
+    }
+
 }

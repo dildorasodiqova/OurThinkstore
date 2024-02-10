@@ -11,6 +11,5 @@ import java.util.UUID;
 @Getter
 @Setter
 public class ProductLikeCreateDto {
-    private UUID user;
     private UUID product;
 }

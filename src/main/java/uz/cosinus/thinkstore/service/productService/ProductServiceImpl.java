@@ -2,6 +2,7 @@ package uz.cosinus.thinkstore.service.productService;
 
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
+import org.apache.coyote.BadRequestException;
 import org.modelmapper.ModelMapper;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageRequest;
@@ -10,6 +11,8 @@ import org.springframework.transaction.annotation.Transactional;
 import uz.cosinus.thinkstore.dto.createDto.ProductCreateDto;
 import uz.cosinus.thinkstore.dto.createDto.ProductFieldValuesCreateDto;
 import uz.cosinus.thinkstore.dto.createDto.ProductFieldsCreateDto;
+import uz.cosinus.thinkstore.dto.responseDto.CategoryResponseDto;
+import uz.cosinus.thinkstore.dto.responseDto.ProductFieldsResponseDto;
 import uz.cosinus.thinkstore.dto.responseDto.ProductResponseDto;
 import uz.cosinus.thinkstore.entity.AttachmentEntity;
 import uz.cosinus.thinkstore.entity.CategoryEntity;
@@ -37,10 +40,7 @@ public class ProductServiceImpl implements ProductService{
     private final ProductPhotosService productPhotosService;
     private final ProductFieldsService productFieldsService;
     private final ModelMapper modelMapper;
-    @Override
-    public ProductEntity findById(UUID productId) {
-        return productRepository.findById(productId).orElseThrow(()-> new DataAlreadyExistsException("Product not found !"));
-    }
+
 
     @Transactional
     @Override
@@ -55,6 +55,13 @@ public class ProductServiceImpl implements ProductService{
             throw new DataAlreadyExistsException("Product already exists");
         }
         CategoryEntity category = categoryService.findById(dto.getCategoryId());
+
+        List<CategoryResponseDto> subList = categoryService.subCategories(category.getId());
+
+        if(!subList.isEmpty()){
+            throw new uz.cosinus.thinkstore.exception.BadRequestException("You cannot save products to this category. please save to sub categories. ");
+        }
+
         ProductEntity map = modelMapper.map(dto, ProductEntity.class);
         map.setCategory(category);
 
@@ -81,6 +88,12 @@ public class ProductServiceImpl implements ProductService{
         product.setCategory(categoryService.getById(save.getCategory().getId()));
 
         return product;
+    }
+
+
+    @Override
+    public ProductEntity findById(UUID productId) {
+        return productRepository.findById(productId).orElseThrow(()-> new DataAlreadyExistsException("Product not found !"));
     }
 
     @Transactional
@@ -141,7 +154,7 @@ public class ProductServiceImpl implements ProductService{
     private ProductResponseDto parse(ProductEntity product){
         ProductResponseDto map = modelMapper.map(product, ProductResponseDto.class);
         map.setId(product.getId());
-        map.setCreatedDate(product.getCreatedDate());
+        map.setCreatedDate(product.getCreatedDate().toLocalDateTime());
         /// uyerda rasmlar qob ketdi
         map.setCategory(categoryService.getById(product.getCategory().getId()));
 
@@ -150,13 +163,23 @@ public class ProductServiceImpl implements ProductService{
     private List<ProductResponseDto> parse(List<ProductEntity> products){
         List<ProductResponseDto> list = new ArrayList<>();
         for (ProductEntity product : products) {
-            ProductResponseDto map = modelMapper.map(product, ProductResponseDto.class);
-            map.setId(product.getId());
-            map.setCreatedDate(product.getCreatedDate());
-            /// uyerda rasmlar qob ketdi
-            map.setCategory(categoryService.getById(product.getCategory().getId()));
+            CategoryResponseDto dto = categoryService.getById(product.getCategory().getId());
+            List<UUID> photos = productPhotosService.getPhotosOfProduct(product.getId());
+           List<ProductFieldsResponseDto> list1 =  productFieldsService.getFieldsOfProducts(product.getId());
+            ProductResponseDto response = new ProductResponseDto(
+                    product.getId(),
+                    product.getName(),
+                    product.getDescription(),
+                    product.getPrice(),
+                    product.getCount(),
+                    dto,
+                    photos,
+                    product.getBrand(),
+                    product.getCreatedDate().toLocalDateTime(),
+                    list1
+                    );
 
-            list.add(map);
+            list.add(response);
         }
         return list;
     }

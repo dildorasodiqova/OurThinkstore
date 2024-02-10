@@ -39,7 +39,7 @@ public class OrderController {
 
     @PreAuthorize("hasAuthority('ADMIN')")
     @PutMapping("/updateStatus/{orderId}")
-    public ResponseEntity<OrderResponseDto> updateStatus(@PathVariable UUID orderId,@RequestParam String status,  Principal principal){
+    public ResponseEntity<String> updateStatus(@PathVariable UUID orderId,@RequestParam String status,  Principal principal){
         return ResponseEntity.ok(orderService.updateStatus(orderId, OrderStatus.valueOf(status), UUID.fromString(principal.getName())));
     }
 

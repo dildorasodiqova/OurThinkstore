@@ -11,12 +11,13 @@ import lombok.Setter;
 @Getter
 @Setter
 @Entity(name = "feedback")
+@Table(name = "feedback")
 public class FeedbackEntity extends BaseEntity {
     @JoinColumn(name = "product_id")
-    @ManyToOne(fetch = FetchType.LAZY, optional = false)
+    @ManyToOne(fetch = FetchType.EAGER, optional = false)
     private ProductEntity product;
 
-    @ManyToOne(fetch = FetchType.LAZY, optional = false)
+    @ManyToOne(fetch = FetchType.EAGER, optional = false)
     @JoinColumn(name = "user_id")
     private UserEntity user;
 

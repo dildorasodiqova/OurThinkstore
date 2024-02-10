@@ -1,5 +1,6 @@
 package uz.cosinus.thinkstore.dto.createDto;
 
+import jakarta.persistence.Column;
 import jakarta.validation.constraints.NotNull;
 import lombok.AllArgsConstructor;
 import lombok.Builder;
@@ -17,5 +18,6 @@ public class FeedBackCreateDto {
     private UUID productId;
 
     private int rate;
+
     private String text;
 }

@@ -1,5 +1,6 @@
 package uz.cosinus.thinkstore.service.productService;
 
+import org.apache.coyote.BadRequestException;
 import uz.cosinus.thinkstore.dto.createDto.ProductCreateDto;
 import uz.cosinus.thinkstore.dto.responseDto.ProductResponseDto;
 import uz.cosinus.thinkstore.entity.ProductEntity;

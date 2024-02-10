@@ -25,7 +25,7 @@ public class FeedbackServiceImpl implements FeedbackService {
     private final FeedBackRepository feedBackRepository; /// shularni service bn alishtirish kk
     private final UserService userService;
     private final ProductService productService;
-    private final ModelMapper modelMapper;
+
 
     @Override
     public FeedbackResponseDto create(FeedBackCreateDto dto, UUID userId) {
@@ -77,10 +77,7 @@ public class FeedbackServiceImpl implements FeedbackService {
     }
 
     private FeedbackResponseDto parse(FeedbackEntity dto){
-        FeedbackResponseDto map = modelMapper.map(dto, FeedbackResponseDto.class);
-        map.setId(dto.getId());
-        map.setUserName(dto.getUser().getFirstName());
-        return map;
+        return new FeedbackResponseDto(dto.getId(), dto.getProduct().getId(), dto.getUser().getFirstName(), dto.getRate(), dto.getText(), dto.getCreatedDate().toLocalDateTime());
     }
 
     private FeedbackEntity parse(FeedBackCreateDto dto, UUID userId){

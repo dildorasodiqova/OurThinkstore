@@ -27,7 +27,7 @@ public class CategoryController {
 
     @PreAuthorize("hasAuthority('ADMIN')")
     @PutMapping("/update/{categoryId}")
-    public ResponseEntity<CategoryResponseDto> update(@PathVariable UUID categoryId, @RequestParam CategoryCreateDto dto){
+    public ResponseEntity<CategoryResponseDto> update(@PathVariable UUID categoryId, @RequestBody CategoryCreateDto dto){
         return ResponseEntity.ok(categoryService.update(categoryId, dto));
     }
 
@@ -39,7 +39,7 @@ public class CategoryController {
 
     @PermitAll
     @GetMapping("/firstCategory")
-    private ResponseEntity<List<CategoryResponseDto>> firstCategory(){
+    public ResponseEntity<List<CategoryResponseDto>> firstCategory(){
         return ResponseEntity.ok(categoryService.firstCategories());
     }
 

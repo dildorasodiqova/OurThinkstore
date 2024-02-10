@@ -57,7 +57,8 @@ public class UserServiceImpl implements  UserService{
     public JwtResponse signIn(VerifyDtoP verifyDtoP) {
         UserEntity userEntity = userRepository.findByPhoneNumber(verifyDtoP.getPhoneNumber())
                 .orElseThrow(() -> new DataNotFoundException("User not found with email: " + verifyDtoP.getPhoneNumber()));
-        if(userEntity.getIsAuthenticated() && userEntity.getIsActive()) {
+//        if(userEntity.getIsAuthenticated() && userEntity.getIsActive()) {
+        if(userEntity.getIsActive()){
             if(passwordEncoder.matches(verifyDtoP.getPassword(), userEntity.getPassword())) {
                 return new JwtResponse(jwtService.generateAccessToken(userEntity), jwtService.generateRefreshToken(userEntity));
             }
@@ -134,7 +135,7 @@ public class UserServiceImpl implements  UserService{
     private UserResponseDto parse(UserEntity userEntity) {
         UserResponseDto map = modelMapper.map(userEntity, UserResponseDto.class);
         map.setId(userEntity.getId());
-        map.setCreatedDate(userEntity.getCreatedDate());
+        map.setCreatedDate(userEntity.getCreatedDate().toLocalDateTime());
         return map;
 
     }
@@ -144,7 +145,7 @@ public class UserServiceImpl implements  UserService{
         for (UserEntity userEntity : userEntities) {
             UserResponseDto map = modelMapper.map(userEntity, UserResponseDto.class);
             map.setId(userEntity.getId());
-            map.setCreatedDate(userEntity.getCreatedDate());
+            map.setCreatedDate(userEntity.getCreatedDate().toLocalDateTime());
             list.add(map);
         }
         return list;

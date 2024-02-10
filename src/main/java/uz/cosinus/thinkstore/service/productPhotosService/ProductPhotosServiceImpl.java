@@ -21,4 +21,9 @@ public class ProductPhotosServiceImpl implements ProductPhotosService{
         return productPhotosRepository.save(productPhotos);
     }
 
+    @Override
+    public List<UUID> getPhotosOfProduct(UUID id) {
+        return productPhotosRepository.getPhotosOfProduct(id);
+    }
+
 }

@@ -10,6 +10,7 @@ import uz.cosinus.thinkstore.entity.OrderEntity;
 import uz.cosinus.thinkstore.entity.OrderProductEntity;
 import uz.cosinus.thinkstore.entity.UserEntity;
 import uz.cosinus.thinkstore.enums.OrderStatus;
+import uz.cosinus.thinkstore.exception.BadRequestException;
 import uz.cosinus.thinkstore.exception.DataNotFoundException;
 import uz.cosinus.thinkstore.repository.OrderProductRepository;
 import uz.cosinus.thinkstore.repository.OrderRepository;
@@ -19,8 +20,7 @@ import uz.cosinus.thinkstore.service.orderProductService.OrderProductService;
 import java.util.List;
 import java.util.UUID;
 
-import static uz.cosinus.thinkstore.enums.OrderStatus.CANCELLED;
-import static uz.cosinus.thinkstore.enums.OrderStatus.NEW;
+import static uz.cosinus.thinkstore.enums.OrderStatus.*;
 
 @Service
 @RequiredArgsConstructor
@@ -38,7 +38,7 @@ public class OrderServiceImpl implements OrderService {
             price += product.getPrice();
         }
 
-        OrderEntity order = orderRepository.save(new OrderEntity(user, price, NEW, false));
+        OrderEntity order = orderRepository.save(new OrderEntity(user, price, CREATED, false));
         List<OrderProductResponseDto> save = orderProductService.save(order, dto.getProducts());
         return parse(order, save);
     }
@@ -79,18 +79,45 @@ public class OrderServiceImpl implements OrderService {
     }
 
     @Override
-    public OrderResponseDto updateStatus(UUID orderId, OrderStatus status, UUID currentUser) {
+    public String updateStatus(UUID orderId, OrderStatus status, UUID currentUser) {
         OrderEntity order = orderRepository.findById(orderId).orElseThrow(() -> new DataNotFoundException("Order not found"));
-        if(order.getStatus().equals(status)){
-            /**
-             *
-             * shuyerda nima bolsa yoki nima bolmasa deb tekshirish kk
-             */
+        if (order.getStatus().equals(status)) {
+            throw new BadRequestException("You cannot change the status !");
         }
-        return new OrderResponseDto();
+        switch (status) {
+            case IN_PROGRESS -> {
+                if (order.getStatus().equals(CREATED))
+                    orderRepository.updateStatus(orderId, IN_PROGRESS);
+                else
+                    throw new BadRequestException("You cannot change the status !");
+            }
+            case DELIVERED -> {
+                if (order.getStatus().equals(IN_PROGRESS))
+                    orderRepository.updateStatus(orderId, DELIVERED);
+                else
+                    throw new BadRequestException("You cannot change the status !");
+            }
+            case APPROVED -> {
+                if (order.getStatus().equals(DELIVERED))
+                    orderRepository.updateStatus(orderId, APPROVED);
+                else
+                    throw new BadRequestException("You cannot change the status !");
+            }
+            case CANCELLED -> { // reject bn bir xil reject keremas
+                // transaction statusni ham o'zgartirish kerak
+                // sorib olgan productni ham orqaga qaytarish kere
+                orderRepository.updateStatus(orderId, CANCELLED);
+            }
+            default -> {
+                throw new BadRequestException("You cannot change the status !");
+            }
+        }
+        return "Successfully";
     }
+
 
     private OrderResponseDto parse(OrderEntity order, List<OrderProductResponseDto> save) {
         return new OrderResponseDto(order.getUser().getId(), order.getPrice(), save);
     }
+
 }
