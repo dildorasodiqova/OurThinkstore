@@ -14,7 +14,8 @@ import java.util.List;
 @AllArgsConstructor
 @Getter
 @Setter
-@Entity(name = "order")
+@Entity(name = "orders")
+@Table(name = "orders")
 public class OrderEntity  extends BaseEntity{
     @JoinColumn(name = "user_id")
     @ManyToOne(fetch = FetchType.LAZY, optional = false)
