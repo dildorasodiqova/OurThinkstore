@@ -12,7 +12,7 @@ public interface BasketProductService {
     BasketProductResponseDto create(BasketProductCreateDto dto, UUID userId);
     List<BasketProductResponseDto> getUserProduct(UUID userId);
 
-    BasketProductResponseDto updateProductCount(UUID productId, UUID userId, int count);
+    String updateProductCount(UUID productId, UUID userId, int count);
 
 
 }

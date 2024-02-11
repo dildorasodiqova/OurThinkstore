@@ -11,6 +11,7 @@ import org.springframework.web.bind.annotation.*;
 import uz.cosinus.thinkstore.dto.createDto.*;
 import uz.cosinus.thinkstore.dto.responseDto.JwtResponse;
 import uz.cosinus.thinkstore.dto.responseDto.UserResponseDto;
+import uz.cosinus.thinkstore.service.SmsApiService;
 import uz.cosinus.thinkstore.service.userService.UserService;
 
 import java.security.Principal;
@@ -23,6 +24,7 @@ import java.util.UUID;
 @SecurityRequirement(name = "Bearer Authentication")
 public class AuthController {
     private final UserService userService;
+    private final SmsApiService smsApiService;
 
     @PermitAll
     @PostMapping("/sign-up")
@@ -42,9 +44,9 @@ public class AuthController {
     }
 
      @PermitAll
-    @GetMapping("/verify-token")
-    public SubjectDto verifyToken(@RequestBody String token) {
-        return userService.verifyToken(token);
+    @PostMapping("/verify-code")
+    public UserResponseDto verifyCode(@RequestBody VerifyDto code) {
+        return smsApiService.verifyCode(code);
     }
 
 }

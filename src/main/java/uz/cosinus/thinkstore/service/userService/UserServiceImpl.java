@@ -15,15 +15,14 @@ import uz.cosinus.thinkstore.dto.createDto.*;
 import uz.cosinus.thinkstore.dto.responseDto.JwtResponse;
 import uz.cosinus.thinkstore.dto.responseDto.UserResponseDto;
 import uz.cosinus.thinkstore.entity.UserEntity;
+import uz.cosinus.thinkstore.enums.SmsType;
 import uz.cosinus.thinkstore.exception.DataAlreadyExistsException;
 import uz.cosinus.thinkstore.exception.DataNotFoundException;
 import uz.cosinus.thinkstore.repository.UserRepository;
+import uz.cosinus.thinkstore.service.SmsApiService;
 import uz.cosinus.thinkstore.service.jwt.JwtService;
 
-import java.util.ArrayList;
-import java.util.List;
-import java.util.Optional;
-import java.util.UUID;
+import java.util.*;
 
 @Service
 @RequiredArgsConstructor
@@ -32,6 +31,7 @@ public class UserServiceImpl implements  UserService{
     private final PasswordEncoder passwordEncoder;
     private final JwtService jwtService;
     private final ModelMapper modelMapper;
+    private final SmsApiService smsApiService;
 
     @Transactional
     @Override
@@ -46,9 +46,17 @@ public class UserServiceImpl implements  UserService{
 
         UserEntity user = modelMapper.map(dto, UserEntity.class);
         user.setPassword(passwordEncoder.encode(user.getPassword()));
+        user.setIsActive(Boolean.FALSE);
         userRepository.save(user);
+
+        Random random = new Random();
+        int randomNumber = random.nextInt(1000, 9999);
+
+        smsApiService.sendMessage(user.getPhoneNumber(), SmsType.REGISTRATION, String.valueOf(randomNumber), user.getId());
         return parse(user);
     }
+
+
 
 
 
@@ -68,19 +76,7 @@ public class UserServiceImpl implements  UserService{
     }
 
 
-    @Override
-    public SubjectDto verifyToken(String token) {
-        try{
-            Jws<Claims> claimsJws = jwtService.extractToken(token);
-            Claims claims = claimsJws.getBody();
-            String subject = claims.getSubject();
-            List<String> roles = (List<String>) claims.get("roles");
-            return new SubjectDto(UUID.fromString(subject),roles);
-        }catch (ExpiredJwtException e){
-            throw new AuthenticationCredentialsNotFoundException("Token expired");
-        }
 
-    }
 
     @Override
     public List<UserResponseDto> getAll(Integer page, Integer size) {

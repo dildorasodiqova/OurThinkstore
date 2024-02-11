@@ -23,8 +23,8 @@ public class ProductLikeServiceImpl implements ProductLikeService {
     @Transactional
     @Override
     public String create(ProductLikeCreateDto dto, UUID currentUser) {
-        if (productLikeRepository.existsAllByProductIdAndUserId(dto.getProduct(), currentUser)) {
-            productLikeRepository.deleteAllByProductIdAndUserId(dto.getProduct(), currentUser);
+        if (productLikeRepository.existsAllByProductIdAndUserIdAndIsActiveTrue(dto.getProduct(), currentUser)) {
+            productLikeRepository.softDeleteByProductIdAndUserId(dto.getProduct(), currentUser);
             return "DisLike";
         } else {
             ProductLikeEntity entity = parse(dto, currentUser);
@@ -36,7 +36,7 @@ public class ProductLikeServiceImpl implements ProductLikeService {
 
     @Override
     public Long getALlLike(UUID productId) {
-        return productLikeRepository.countAllByProductId(productId);
+        return productLikeRepository.countAllByProductIdAndIsActiveTrue(productId);
     }
 
     private ProductLikeEntity parse(ProductLikeCreateDto dto, UUID currentUser) {

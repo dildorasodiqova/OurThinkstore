@@ -19,5 +19,5 @@ public interface UserService {
     List<UserResponseDto> getAll(Integer page, Integer size);
     String getAccessToken(String refreshToken, UUID userId);
     JwtResponse signIn(VerifyDtoP verifyDtoP);
-    SubjectDto verifyToken(String token);
+
 }
