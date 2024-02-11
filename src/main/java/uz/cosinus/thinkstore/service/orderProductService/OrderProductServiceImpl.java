@@ -3,6 +3,7 @@ package uz.cosinus.thinkstore.service.orderProductService;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 import uz.cosinus.thinkstore.dto.createDto.OrderProductCreateDto;
+import uz.cosinus.thinkstore.dto.createDto.OrderProductsCreate;
 import uz.cosinus.thinkstore.dto.responseDto.OrderProductResponseDto;
 import uz.cosinus.thinkstore.entity.OrderEntity;
 import uz.cosinus.thinkstore.entity.OrderProductEntity;
@@ -23,12 +24,12 @@ public class OrderProductServiceImpl implements OrderProductService {
     private final ProductRepository productRepository;
 
     @Override
-    public List<OrderProductResponseDto> save(OrderEntity order, List<OrderProductCreateDto> products) {
+    public List<OrderProductResponseDto> save(OrderEntity order, List<OrderProductsCreate> products) {
         List<OrderProductEntity> pr = products.stream().map(item -> {
             ProductEntity product = productRepository.findById(item.getProductId()).orElseThrow(() -> new DataNotFoundException("Product not found"));
             product.setCount(product.getCount() - item.getCount());
             productRepository.save(product);
-            return new OrderProductEntity(order, product, item.getCount(), item.getPrice());
+            return new OrderProductEntity(order, product, item.getCount(), product.getPrice());
         }).toList();
         orderProductRepository.saveAll(pr);
         return parse(pr);
@@ -42,21 +43,22 @@ public class OrderProductServiceImpl implements OrderProductService {
     }
 
     @Override
-    public List<OrderProductResponseDto> update(List<OrderProductCreateDto> products, OrderEntity order) {
+    public List<OrderProductResponseDto> update(List<OrderProductsCreate> products, OrderEntity order) {
         List<OrderProductEntity> orderProducts = order.getOrderProducts();
         List<UUID> oldProducts = orderProducts.stream().map(OrderProductEntity::getId).toList();
-        List<UUID> newProducts = products.stream().map(OrderProductCreateDto::getProductId).toList();
+        List<UUID> newProducts = products.stream().map(OrderProductsCreate::getProductId).toList();
         List<OrderProductEntity> saveAll = new ArrayList<>();
+
         products.forEach(item -> {
             if (!oldProducts.contains(item.getProductId())){
                 ProductEntity product = productRepository.findById(item.getProductId()).orElseThrow(() -> new DataNotFoundException("Product not found"));
-                saveAll.add(new OrderProductEntity(order, product, item.getCount(), item.getPrice()));
+                saveAll.add(new OrderProductEntity(order, product, item.getCount(), product.getPrice()));
             }else {
                 Optional<OrderProductEntity> first = orderProducts.stream().filter(product -> product.getProduct().getId().equals(item.getProductId())).findFirst();
                if (first.isPresent()){
                    OrderProductEntity orderProduct = first.get();
                    orderProduct.setCount(item.getCount());
-                   orderProduct.setPrice(item.getPrice());
+                   orderProduct.setPrice(orderProduct.getProduct().getPrice());
                    saveAll.add(orderProduct);
                }
             }

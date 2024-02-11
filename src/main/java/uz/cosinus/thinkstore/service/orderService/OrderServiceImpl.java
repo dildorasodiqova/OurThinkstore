@@ -4,19 +4,25 @@ import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 import uz.cosinus.thinkstore.dto.createDto.OrderCreateDto;
 import uz.cosinus.thinkstore.dto.createDto.OrderProductCreateDto;
+import uz.cosinus.thinkstore.dto.createDto.OrderProductsCreate;
 import uz.cosinus.thinkstore.dto.responseDto.OrderProductResponseDto;
 import uz.cosinus.thinkstore.dto.responseDto.OrderResponseDto;
+import uz.cosinus.thinkstore.dto.responseDto.ProductResponseDto;
 import uz.cosinus.thinkstore.entity.OrderEntity;
 import uz.cosinus.thinkstore.entity.OrderProductEntity;
+import uz.cosinus.thinkstore.entity.ProductEntity;
 import uz.cosinus.thinkstore.entity.UserEntity;
 import uz.cosinus.thinkstore.enums.OrderStatus;
 import uz.cosinus.thinkstore.exception.BadRequestException;
 import uz.cosinus.thinkstore.exception.DataNotFoundException;
 import uz.cosinus.thinkstore.repository.OrderProductRepository;
 import uz.cosinus.thinkstore.repository.OrderRepository;
+import uz.cosinus.thinkstore.repository.ProductRepository;
 import uz.cosinus.thinkstore.repository.UserRepository;
 import uz.cosinus.thinkstore.service.orderProductService.OrderProductService;
+import uz.cosinus.thinkstore.service.productService.ProductService;
 
+import java.util.ArrayList;
 import java.util.List;
 import java.util.UUID;
 
@@ -28,18 +34,29 @@ public class OrderServiceImpl implements OrderService {
     private final OrderRepository orderRepository;
     private final UserRepository userRepository;
     private final OrderProductService orderProductService;
+    private final ProductRepository productRepository;
 
     @Override
     public OrderResponseDto add(OrderCreateDto dto, UUID currentUserId) {
         UserEntity user = userRepository.findById(currentUserId).orElseThrow(() -> new DataNotFoundException("User not found"));
+        OrderEntity order = null;
+        ProductEntity productEntity = null;
+        List<OrderProductsCreate> list = new ArrayList<>();
+        for (OrderProductsCreate product : dto.getProducts()) {
+            productEntity = productRepository.findById(product.getProductId()).orElseThrow(()-> new DataNotFoundException("Product not found !"));
 
-        double price = 0;
-        for (OrderProductCreateDto product : dto.getProducts()) {
-            price += product.getPrice();
+            if (productEntity.getCount() <= product.getCount()) {
+                order = orderRepository.save(new OrderEntity(user, productEntity.getPrice(), CREATED, false));
+                list.add(product);
+
+                productEntity.setCount(productEntity.getCount() - product.getCount());
+                productRepository.save(productEntity);       /// productni countini kamaytirib qoyayapmiz
+            }
         }
+        List<OrderProductResponseDto> save = orderProductService.save(order, list);
 
-        OrderEntity order = orderRepository.save(new OrderEntity(user, price, CREATED, false));
-        List<OrderProductResponseDto> save = orderProductService.save(order, dto.getProducts());
+
+        assert order != null;
         return parse(order, save);
     }
 
@@ -63,11 +80,10 @@ public class OrderServiceImpl implements OrderService {
     @Override
     public OrderResponseDto update(UUID orderId, OrderCreateDto dto) {
         OrderEntity order = orderRepository.findById(orderId).orElseThrow(() -> new DataNotFoundException("Order not found"));
-        double price = 0;
-        for (OrderProductCreateDto product : dto.getProducts()) {
-            price += product.getPrice();
+        List<OrderProductEntity> orderProducts = order.getOrderProducts();
+        for (OrderProductEntity orderProduct : orderProducts) {
+            order.setPrice(orderProduct.getProduct().getPrice());
         }
-        order.setPrice(price);
         orderRepository.save(order);
         List<OrderProductResponseDto> update = orderProductService.update(dto.getProducts(), order);
         return parse(order, update);
@@ -103,9 +119,15 @@ public class OrderServiceImpl implements OrderService {
                 else
                     throw new BadRequestException("You cannot change the status !");
             }
-            case CANCELLED -> { // reject bn bir xil reject keremas
+            case CANCELLED -> {
                 // transaction statusni ham o'zgartirish kerak
-                // sorib olgan productni ham orqaga qaytarish kere
+
+
+                for (OrderProductEntity orderProduct : order.getOrderProducts()) {   // sotib olgan productni orqaga qaytarish
+                    ProductEntity product = orderProduct.getProduct();
+                    product.setCount(product.getCount() + orderProduct.getCount());
+                    productRepository.save(product);
+                }
                 orderRepository.updateStatus(orderId, CANCELLED);
             }
             default -> {

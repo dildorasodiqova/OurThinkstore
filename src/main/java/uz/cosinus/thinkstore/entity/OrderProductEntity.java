@@ -14,11 +14,11 @@ import lombok.Setter;
 @Table(name = "order_product")
 public class OrderProductEntity extends BaseEntity {
     @JoinColumn(name = "order_id")
-    @ManyToOne(fetch = FetchType.LAZY,optional = false)
+    @ManyToOne(fetch = FetchType.EAGER,optional = false)
     private OrderEntity order;
 
     @JoinColumn(name = "product_id")
-    @ManyToOne(fetch = FetchType.LAZY, optional = false)
+    @ManyToOne(fetch = FetchType.EAGER, optional = false)
     private ProductEntity product;
 
     @Column(nullable = false)
