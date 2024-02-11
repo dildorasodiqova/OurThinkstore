@@ -5,6 +5,7 @@ import lombok.AllArgsConstructor;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 import lombok.Setter;
+import uz.cosinus.thinkstore.enums.PaymentType;
 
 import java.util.List;
 import java.util.UUID;
@@ -15,4 +16,5 @@ import java.util.UUID;
 @Setter
 public class OrderCreateDto {
     private List<OrderProductsCreate> products;
+    private PaymentType paymentType;
 }

@@ -9,7 +9,7 @@ import java.util.UUID;
 
 public interface TransactionService {
 
-    TransactionResponseDto transaction(TransactionCreateDto transactionCreateDto);
+    TransactionResponseDto transaction(TransactionCreateDto transactionCreateDto, UUID currentUser);
     List<TransactionResponseDto> getAll(int page, int size);
     TransactionResponseDto getById(UUID transactionId);
 

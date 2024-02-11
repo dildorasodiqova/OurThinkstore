@@ -32,7 +32,7 @@ public class BasketProductController {
 
     @PreAuthorize("hasAuthority('USER')")
     @PutMapping("/basketController/updateCount/{productId}")
-    public ResponseEntity<BasketProductResponseDto> updateCount(@PathVariable UUID productId,@RequestParam int count, Principal principal){
+    public ResponseEntity<String> updateCount(@PathVariable UUID productId,@RequestParam int count, Principal principal){
         return ResponseEntity.ok(basketProductService.updateProductCount(productId,UUID.fromString(principal.getName()), count));
     }
 

@@ -15,11 +15,11 @@ import lombok.NoArgsConstructor;
 public class BasketProductEntity extends BaseEntity{
 
     @JoinColumn(name = "user_id")
-    @ManyToOne(fetch = FetchType.LAZY, optional = false)
+    @ManyToOne(fetch = FetchType.EAGER, optional = false)
     private UserEntity user;
 
     @JoinColumn(name = "product_id")
-    @ManyToOne(fetch = FetchType.LAZY, optional = false)
+    @ManyToOne(fetch = FetchType.EAGER, optional = false)
     private ProductEntity product;
 
     private int count;

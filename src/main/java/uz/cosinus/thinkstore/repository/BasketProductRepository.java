@@ -23,5 +23,5 @@ public interface BasketProductRepository  extends JpaRepository<BasketProductEnt
     @Query("UPDATE basketProduct bp " +
             "SET bp.count = bp.count + :count " +
             "WHERE bp.user.id = :userId AND bp.product.id = :productId")
-    BasketProductEntity updateCount(@Param("userId") UUID userId, @Param("productId") UUID productId, @Param("count") int count);
+    void updateCount(@Param("userId") UUID userId, @Param("productId") UUID productId, @Param("count") int count);
 }

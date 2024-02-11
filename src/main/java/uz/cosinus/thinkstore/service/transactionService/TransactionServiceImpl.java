@@ -6,14 +6,18 @@ import org.springframework.data.domain.PageRequest;
 import org.springframework.stereotype.Service;
 import uz.cosinus.thinkstore.dto.createDto.TransactionCreateDto;
 import uz.cosinus.thinkstore.dto.responseDto.TransactionResponseDto;
+import uz.cosinus.thinkstore.entity.OrderEntity;
 import uz.cosinus.thinkstore.entity.TransactionEntity;
 import uz.cosinus.thinkstore.enums.PaymentType;
 import uz.cosinus.thinkstore.enums.TransactionStatus;
+import uz.cosinus.thinkstore.exception.BadRequestException;
 import uz.cosinus.thinkstore.exception.DataNotFoundException;
+import uz.cosinus.thinkstore.repository.OrderRepository;
 import uz.cosinus.thinkstore.repository.TransactionRepository;
 import uz.cosinus.thinkstore.service.orderService.OrderService;
 
 import java.util.List;
+import java.util.Objects;
 import java.util.UUID;
 import java.util.stream.Collectors;
 
@@ -23,10 +27,10 @@ import static uz.cosinus.thinkstore.enums.TransactionStatus.CANCELED;
 @RequiredArgsConstructor
 public class TransactionServiceImpl implements TransactionService {
     private final TransactionRepository transactionRepository;
-    private final OrderService orderService;
+    private final OrderRepository orderRepository;
 
-    public TransactionResponseDto transaction(TransactionCreateDto transactionCreateDto) {
-        TransactionEntity transactionEntity = mapToEntity(transactionCreateDto);
+    public TransactionResponseDto transaction(TransactionCreateDto transactionCreateDto, UUID currentUser) {
+        TransactionEntity transactionEntity = mapToEntity(transactionCreateDto, currentUser);
         transactionRepository.save(transactionEntity);
         return mapToDto(transactionEntity);
     }
@@ -65,11 +69,16 @@ public class TransactionServiceImpl implements TransactionService {
 
 
 
-    private TransactionEntity mapToEntity(TransactionCreateDto transactionCreateDto) {
+    private TransactionEntity mapToEntity(TransactionCreateDto transactionCreateDto, UUID currentUser) {
         TransactionEntity transactionEntity = new TransactionEntity();
-        transactionEntity.setOrder(orderService.findById(transactionCreateDto.getOrderId()));
+
+        OrderEntity order = orderRepository.findById(transactionCreateDto.getOrderId()).orElseThrow(()-> new DataNotFoundException("Order not found !"));
+        if (!Objects.equals(order.getUser().getId(), currentUser)){
+            throw new BadRequestException("You cannot transaction");
+        }
+        transactionEntity.setOrderId(transactionCreateDto.getOrderId());
         transactionEntity.setPrice(transactionCreateDto.getPrice());
-        transactionEntity.setPaymentType(PaymentType.valueOf(transactionCreateDto.getPaymentType()));
+        transactionEntity.setPaymentType(transactionCreateDto.getPaymentType());
         transactionEntity.setStatus(TransactionStatus.CREATED); // shuyerda created deyishim togrimi
         return transactionEntity;
     }
@@ -77,7 +86,7 @@ public class TransactionServiceImpl implements TransactionService {
     private TransactionResponseDto mapToDto(TransactionEntity transactionEntity) {
         TransactionResponseDto transactionResponseDto = new TransactionResponseDto();
         transactionResponseDto.setId(transactionEntity.getId());
-        transactionResponseDto.setOrderId(transactionEntity.getOrder().getId());
+        transactionResponseDto.setOrderId(transactionEntity.getOrderId());
         transactionResponseDto.setPrice(transactionEntity.getPrice());
         transactionResponseDto.setPaymentType(transactionEntity.getPaymentType());
         transactionResponseDto.setStatus(transactionEntity.getStatus());

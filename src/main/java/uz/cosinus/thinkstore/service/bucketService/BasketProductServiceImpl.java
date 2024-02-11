@@ -33,6 +33,9 @@ public class BasketProductServiceImpl implements BasketProductService {
         if (product.getCount() < dto.getCount()) {
             throw new DataNotEnoughException("Product is not enough.  There are" + product.getCount() + " products");
         }
+        product.setCount(product.getCount() - dto.getCount());
+        productRepository.save(product);
+
         BasketProductEntity save = basketProductRepository.save(new BasketProductEntity(user, product, dto.getCount()));
         return parse(save);
     }
@@ -51,9 +54,13 @@ public class BasketProductServiceImpl implements BasketProductService {
     }
 
     @Override
-    public BasketProductResponseDto updateProductCount(UUID productId, UUID userId, int count) {
-            BasketProductEntity basketProduct = basketProductRepository.updateCount(userId, productId, count);
-        return parse(basketProduct);
+    public String updateProductCount(UUID productId, UUID userId, int count) {
+        ProductEntity productEntity = productRepository.findById(productId).orElseThrow(() -> new DataNotFoundException("Product not found !"));
+        if (productEntity.getCount() < count){
+            throw new DataNotEnoughException("There is not enough product left .");
+        }
+        basketProductRepository.updateCount(userId, productId, count);
+        return "Successfully";
     }
 
 

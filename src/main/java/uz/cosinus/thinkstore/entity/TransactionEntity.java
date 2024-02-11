@@ -9,6 +9,7 @@ import uz.cosinus.thinkstore.enums.PaymentType;
 import uz.cosinus.thinkstore.enums.TransactionStatus;
 
 import java.time.LocalDateTime;
+import java.util.UUID;
 
 @AllArgsConstructor
 @NoArgsConstructor
@@ -17,7 +18,9 @@ import java.time.LocalDateTime;
 @Entity(name = "transaction")
 @Table(name = "transactions")
 public class TransactionEntity extends BaseEntity{
-    @JoinColumn(name = "order_id")
+    @Column(name = "order_id")
+    private UUID orderId;
+    @JoinColumn(name = "order_id",insertable = false,updatable = false)
     @ManyToOne(cascade = CascadeType.ALL, fetch = FetchType.EAGER)
     private OrderEntity order;
 

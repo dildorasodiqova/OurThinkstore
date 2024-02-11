@@ -17,7 +17,7 @@ public class TransactionCreateDto {
 
     private Double price;
 
-    private String paymentType;
+    private PaymentType paymentType;
 
 
 }

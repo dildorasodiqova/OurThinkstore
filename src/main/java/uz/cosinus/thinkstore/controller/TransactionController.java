@@ -9,6 +9,7 @@ import org.springframework.web.bind.annotation.*;
 import uz.cosinus.thinkstore.dto.createDto.TransactionCreateDto;
 import uz.cosinus.thinkstore.dto.responseDto.TransactionResponseDto;
 import uz.cosinus.thinkstore.entity.TransactionEntity;
+import uz.cosinus.thinkstore.enums.TransactionStatus;
 import uz.cosinus.thinkstore.service.transactionService.TransactionService;
 
 import java.security.Principal;
@@ -22,14 +23,10 @@ import java.util.UUID;
 public class TransactionController {
     private final TransactionService transactionService;
 
-    @PreAuthorize("hasAuthority('USER')")
-    @PostMapping
-    public ResponseEntity<TransactionResponseDto> createTransaction(@RequestBody TransactionCreateDto transactionCreateDto) {
-        return new ResponseEntity<>(transactionService.transaction(transactionCreateDto), HttpStatus.CREATED);
-    }
+
 
     @PreAuthorize("hasAuthority('ADMIN')")
-    @GetMapping
+    @GetMapping("/getAll")
     public ResponseEntity<List<TransactionResponseDto>> getAllTransactions(
             @RequestParam(value = "page", defaultValue = "0")
             int page,
@@ -52,9 +49,19 @@ public class TransactionController {
         return ResponseEntity.ok(transactionService.transactionsOfUser(UUID.fromString(principal.getName())));
     }
 
+    @PreAuthorize("hasAuthority('ADMIN')")
     @PutMapping("/cancel/{transactionId}")
     public ResponseEntity<TransactionResponseDto> cancel(@PathVariable UUID transactionId) {
         return new ResponseEntity<>(transactionService.cancelTransaction(transactionId), HttpStatus.OK);
     }
+
+    @PreAuthorize("hasAuthority('ADMIN') or hasAuthority('USER')")
+    @PutMapping("/updateStatus/{transactionId}")
+    public ResponseEntity<TransactionResponseDto> updateStatus(@PathVariable UUID transactionId, TransactionStatus status){
+        return ResponseEntity.ok(transactionService.updateStatus(transactionId, status));
+    }
+
+
+
 
 }
