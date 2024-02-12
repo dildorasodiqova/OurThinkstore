@@ -88,7 +88,7 @@ public class UserServiceImpl implements  UserService{
 
 
     @Override
-    public String getAccessToken(String refreshToken, UUID userId) {
+    public JwtResponse getAccessToken(String refreshToken) {
         try{
 
             Jws<Claims> claimsJws = jwtService.extractToken(refreshToken);
@@ -96,8 +96,9 @@ public class UserServiceImpl implements  UserService{
             String subject = claims.getSubject();
 
             UserEntity userEntity = userRepository.findById(UUID.fromString(subject))
-                    .orElseThrow(() -> new DataNotFoundException("User not found with id: " + userId));
-            return jwtService.generateAccessToken(userEntity);
+                    .orElseThrow(() -> new DataNotFoundException("User not found !" ));
+
+            return new JwtResponse(jwtService.generateAccessToken(userEntity), jwtService.generateRefreshToken(userEntity));
 
         }catch (ExpiredJwtException e) {
             throw new AuthenticationCredentialsNotFoundException("Token expired");
