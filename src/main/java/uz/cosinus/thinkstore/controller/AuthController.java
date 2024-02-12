@@ -38,9 +38,10 @@ public class AuthController {
         return userService.signIn(verifyDtoP);
     }
 
+    @PermitAll
     @PostMapping("/access-token")
-    public String getAccessToken(@RequestBody String refreshToken, Principal principal) {
-        return userService.getAccessToken(refreshToken, UUID.fromString(principal.getName()));
+    public JwtResponse getAccessToken(@RequestParam String refreshToken) {
+        return userService.getAccessToken(refreshToken);
     }
 
      @PermitAll
@@ -48,5 +49,8 @@ public class AuthController {
     public UserResponseDto verifyCode(@RequestBody VerifyDto code) {
         return smsApiService.verifyCode(code);
     }
+
+
+
 
 }
